@@ -134,6 +134,7 @@ void multiplexer::MultiPlexServer::onClientConnection(const TcpConnectionPtr& co
 			char buf[256];
 			snprintf(buf, sizeof(buf), "CONN %d FROM %s IS UP\r\n", id,
 				conn->peerAddress().toIpPort().c_str());
+			//通过内部连接（0）和文本协议通知后台
 			sendBackendString(0, buf);//通知backend,此时id==0
 		}
 	}
@@ -147,6 +148,7 @@ void multiplexer::MultiPlexServer::onClientConnection(const TcpConnectionPtr& co
 			char buf[256];
 			snprintf(buf, sizeof(buf), "CONN %d FROM %s IS DOWN\r\n", id,
 				conn->peerAddress().toIpPort().c_str());
+			//通过内部连接（0）和文本协议通知后台
 			sendBackendString(0, buf);//通知backend,此时id==0
 
 			MutexLockGuard lock(mutex_);

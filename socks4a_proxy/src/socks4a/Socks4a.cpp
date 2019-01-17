@@ -139,6 +139,7 @@ private:
 							where = endOfDomainName;//更新地址
 							LOG_DEBUG << "Socks4a hostName: " << hostName;
 							InetAddress tmp;
+							//注意这里的域名解析，在真正的系统里应该使用异步的DSN解析
 							if (InetAddress::resolve(hostName, &tmp))//解析域名：resolve hostname to IP address
 							{
 								addr.sin_addr.s_addr = tmp.ipNetEndian();//更新ip

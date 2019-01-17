@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vs2013_multiplexer_linux", 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "socks4a_proxy", "socks4a_proxy\socks4a_proxy.vcxproj", "{8484ECC8-38D4-4BC8-9582-46A9D40E30F4}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "demultiplexer", "demultiplexer\demultiplexer.vcxproj", "{46013A1A-C390-4A2E-965B-871FDD868976}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -39,6 +41,10 @@ Global
 		{8484ECC8-38D4-4BC8-9582-46A9D40E30F4}.Debug|Win32.Build.0 = Debug|Win32
 		{8484ECC8-38D4-4BC8-9582-46A9D40E30F4}.Release|Win32.ActiveCfg = Release|Win32
 		{8484ECC8-38D4-4BC8-9582-46A9D40E30F4}.Release|Win32.Build.0 = Release|Win32
+		{46013A1A-C390-4A2E-965B-871FDD868976}.Debug|Win32.ActiveCfg = Debug|Win32
+		{46013A1A-C390-4A2E-965B-871FDD868976}.Debug|Win32.Build.0 = Debug|Win32
+		{46013A1A-C390-4A2E-965B-871FDD868976}.Release|Win32.ActiveCfg = Release|Win32
+		{46013A1A-C390-4A2E-965B-871FDD868976}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

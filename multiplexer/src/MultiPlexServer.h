@@ -35,6 +35,19 @@
 using namespace::muduo;
 using namespace::muduo::net;
 
+
+//MutilplexServer的功能需求（本地N:1连接转发服务）如下：
+//允许外部的多个客户端连接接入，并将N个TCP数据流合成一个，然后转发到后台（backend）。
+//外部与本服务直接数据透传，后台与本服务的协议格式如下：
+//header + content
+//header:len[1] + id[2];
+//len:a byte sum of content;
+//后台可以据此区分数据来源，对内数据流如下：
+//len id_lo id_hi content...      len id_lo id_hi content...   len id_lo id_hi content...  
+//后台与本服务间还可以通过特殊连接（id==0）用\r\n分割的文本协议沟通，后台据此可以控制本连接服务：比如强制断开某个链接；
+//获得新接入或离开的信号。
+
+
 namespace multiplexer
 {
 

@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hub", "message_subhubpub\hub\hub.vcxproj", "{47E5B1F5-9790-46C2-9986-398C87D99786}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "publisher", "message_subhubpub\publisher\publisher.vcxproj", "{B1B3671E-9938-47CF-92C4-AC57974ECE5C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "subscriber", "message_subhubpub\subscriber\subscriber.vcxproj", "{3BFFB8DE-A807-4F1C-9CBB-1C4CCB56BC9F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vs2013_multiplexer_linux", "multiplexer\vs2013_multiplexer_linux.vcxproj", "{6B352696-492F-4C0C-8F0C-8EC0B743C7B5}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "socks4a_proxy", "socks4a_proxy\socks4a_proxy.vcxproj", "{8484ECC8-38D4-4BC8-9582-46A9D40E30F4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{47E5B1F5-9790-46C2-9986-398C87D99786}.Debug|Win32.ActiveCfg = Debug|Win32
+		{47E5B1F5-9790-46C2-9986-398C87D99786}.Debug|Win32.Build.0 = Debug|Win32
+		{47E5B1F5-9790-46C2-9986-398C87D99786}.Release|Win32.ActiveCfg = Release|Win32
+		{47E5B1F5-9790-46C2-9986-398C87D99786}.Release|Win32.Build.0 = Release|Win32
+		{B1B3671E-9938-47CF-92C4-AC57974ECE5C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B1B3671E-9938-47CF-92C4-AC57974ECE5C}.Debug|Win32.Build.0 = Debug|Win32
+		{B1B3671E-9938-47CF-92C4-AC57974ECE5C}.Release|Win32.ActiveCfg = Release|Win32
+		{B1B3671E-9938-47CF-92C4-AC57974ECE5C}.Release|Win32.Build.0 = Release|Win32
+		{3BFFB8DE-A807-4F1C-9CBB-1C4CCB56BC9F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3BFFB8DE-A807-4F1C-9CBB-1C4CCB56BC9F}.Debug|Win32.Build.0 = Debug|Win32
+		{3BFFB8DE-A807-4F1C-9CBB-1C4CCB56BC9F}.Release|Win32.ActiveCfg = Release|Win32
+		{3BFFB8DE-A807-4F1C-9CBB-1C4CCB56BC9F}.Release|Win32.Build.0 = Release|Win32
+		{6B352696-492F-4C0C-8F0C-8EC0B743C7B5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6B352696-492F-4C0C-8F0C-8EC0B743C7B5}.Debug|Win32.Build.0 = Debug|Win32
+		{6B352696-492F-4C0C-8F0C-8EC0B743C7B5}.Release|Win32.ActiveCfg = Release|Win32
+		{6B352696-492F-4C0C-8F0C-8EC0B743C7B5}.Release|Win32.Build.0 = Release|Win32
+		{8484ECC8-38D4-4BC8-9582-46A9D40E30F4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8484ECC8-38D4-4BC8-9582-46A9D40E30F4}.Debug|Win32.Build.0 = Debug|Win32
+		{8484ECC8-38D4-4BC8-9582-46A9D40E30F4}.Release|Win32.ActiveCfg = Release|Win32
+		{8484ECC8-38D4-4BC8-9582-46A9D40E30F4}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -52,7 +52,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>F:\linux-sever\linux_lib\vs2013_boost\boost_1_66_0;F:\linux-sever\linux_lib\muduo_cpp11\cpp11_lib\release-install-cpp11\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>F:\linux-sever\linux_lib\vs2013_boost\boost_1_66_0;F:\linux-sever\linux_lib\muduo_cpp11\cpp11_lib\release-install-cpp11\include;F:\linux-project\example_edwards\linux_my_example\socks4a_proxy\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -80,8 +80,8 @@
     <ClInclude Include="src\Tunnel.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Socks4a.cpp" />
-    <ClCompile Include="src\TcpReplay.cpp" />
+    <ClCompile Include="src\socks4a\Socks4a.cpp" />
+    <ClCompile Include="src\tcpreplay\TcpReplay.cpp" />
     <ClCompile Include="src\Tunnel.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

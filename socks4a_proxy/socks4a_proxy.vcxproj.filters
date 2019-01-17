@@ -23,10 +23,10 @@
     <ClCompile Include="src\Tunnel.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\TcpReplay.cpp">
+    <ClCompile Include="src\tcpreplay\TcpReplay.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\Socks4a.cpp">
+    <ClCompile Include="src\socks4a\Socks4a.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

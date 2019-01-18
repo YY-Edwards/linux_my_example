@@ -93,6 +93,7 @@ namespace multiplexer
 		/*void onBackendMessage(const TcpConnectionPtr& conn,
 							  Buffer* buf,
 						      Timestamp receiveTime);*/
+		void parseBackendInnerCommand(const char* cmd);
 
 		TcpClient				backend_;
 		TcpServer				server_;

@@ -51,6 +51,7 @@ void multiplexer::MultiPlexServer::start()
 {
 	//设置各个ioloop的前置回调
 	//server_.setThreadInitCallback(boost::bind(&MultiPlexServer::threadInitFunc, this, _1));
+	//这里可以调整为由backend来控制监听端口的开启与关闭，以及外部连接的上限
 	backend_.connect();
 	server_.start();
 	
@@ -209,11 +210,13 @@ void multiplexer::MultiPlexServer::sendToClient(int id, const char* payload, int
 	{
 		MutexLockGuard lock(mutex_);
 		std::map<int, TcpConnectionPtr>::iterator it = clientConns_.find(id);
-		if (it != clientConns_.end())//
+		if (it != clientConns_.end())
 		{
 			clientConn = it->second;//仍然是增加引用，防止在使用的过程中被释放
 		}
 	}
+
+
 	if (clientConn)//存在
 	{
 		//注意，这里是继续使用inputbuf还是用零时变量？
@@ -221,8 +224,56 @@ void multiplexer::MultiPlexServer::sendToClient(int id, const char* payload, int
 		const std::string message(payload, payloadLen);
 		clientConn->send(message);
 	}
+	else
+	{
+		if (id == 0)//inner cmd
+		{
+			parseBackendInnerCommand(payload);
+		}
+		else
+		{
+			LOG_DEBUG << "\r\nrecv unkown id is: " << id;
+		}
+	}
 }
 
+
+void multiplexer::MultiPlexServer::parseBackendInnerCommand(const char* cmd)
+{
+	const std::string str = cmd;
+	static const std::string kListen = "LISTEN ";
+	static const std::string kLimit = "SET LIMIT ";
+	static const std::string kDisconnect = "DISCONNECT ";
+	bool isListen = str.find(kListen) != std::string::npos;
+	bool isLimit = str.find(kLimit) != std::string::npos;
+	bool isDisconnect = str.find(kDisconnect) != std::string::npos;
+	if (isLimit)
+	{
+		auto maxConnsValue = atoi(&str[kLimit.size()]);
+		LOG_DEBUG << "Set limit: " << maxConnsValue;
+	}
+	else if (isListen)
+	{
+		auto actionNumb = atoi(&str[kListen.size()]);
+		LOG_DEBUG << "Set listen action: " << actionNumb;
+	}
+	else if (isDisconnect)
+	{
+		auto connId = atoi(&str[kDisconnect.size()]);
+		assert(clientConns_.find(connId) != clientConns_.end());
+		//if (clientConns_.find(connId) != clientConns_.end())
+		{
+			clientConns_[connId]->shutdown();//断开为外部连接。
+		}
+	}
+	else
+	{
+		LOG_DEBUG << "recv err cmd: " << cmd;
+
+	}
+
+
+}
 
 void multiplexer::MultiPlexServer::sendBackendString(int id, const string& msg)
 {

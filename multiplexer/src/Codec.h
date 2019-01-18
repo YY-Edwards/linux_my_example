@@ -94,6 +94,7 @@ namespace multiplexer
 				{
 					int id = static_cast<uint8_t>(buf->peek()[1]);
 					id |= (static_cast<uint8_t>(buf->peek()[2] << 8));
+					//这里请区分id是内部使用还是外部的。
 					backendPayloadCallback_(id, (buf->peek() + kHeaderLen), payloadLen);//剥离头信息后直接转发
 					buf->retrieve(payloadLen + kHeaderLen);//偏移可读索引:len+id+payload
 				}

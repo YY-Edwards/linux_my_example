@@ -76,12 +76,20 @@ private:
 						 Buffer* buf,
 						 Timestamp receiveTime);
 
+	void doInnerCommand(const std::string& cmd);
+	void sendPacketToServer(uint16_t connId, Buffer* buf);
+
+
 	//与Socks服务建立连接的服务服务端回调
-	void onSocksConnection(const TcpConnectionPtr& conn);
+	void onSocksConnection(const uint16_t connId, const TcpConnectionPtr& conn);
 	//Socks发到本k客户端端的消息回调
-	void onSocksMessage(const TcpConnectionPtr& conn,
+	void onSocksMessage(const uint16_t connId, 
+						const TcpConnectionPtr& conn,
 						Buffer* buf,
 						Timestamp receiveTime);
+
+	void setFrontMaxConns(uint16_t numb);
+	void setFrontListenAction(uint16_t action);
 
 
 	EventLoop*				loop_;

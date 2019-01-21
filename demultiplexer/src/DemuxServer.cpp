@@ -15,8 +15,8 @@ const size_t kMaxPacketLen = 255;
 const size_t kHeaderLen = 3;
 
 DemuxServer::DemuxServer(EventLoop* loop,
-						InetAddress& listenAddr,
-						InetAddress& serverAddr)
+						const InetAddress& listenAddr,
+						const InetAddress& serverAddr)
 						:loop_(loop)
 						, socksAddr_(serverAddr)
 						,server_(loop, listenAddr, "DemuxServer")

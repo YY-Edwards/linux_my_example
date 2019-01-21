@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 			EventLoop loop;
 			g_loop = &loop;
 			DemuxServer server(g_loop, 
-							   InetAddress(listenPort), 
+							   InetAddress(listenPort),
 							   InetAddress(Ip, Port));
 			server.start();
 			loop.loop();

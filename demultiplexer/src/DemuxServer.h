@@ -60,8 +60,8 @@ class DemuxServer : muduo::noncopyable
 public:
 
 	DemuxServer(EventLoop* loop,
-				InetAddress& listenAddr,
-				InetAddress& serverAddr);
+		const InetAddress& listenAddr,
+		const InetAddress& serverAddr);
 	~DemuxServer();
 
 	void start();

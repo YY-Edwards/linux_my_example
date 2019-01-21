@@ -4,7 +4,6 @@ CXX = g++
 #需要的头文件路径
 INC += \
 -I $(MUDUOINC) \
--I $(OBJSDIR)/../src \
 -I /usr/include/
 
 
@@ -12,7 +11,6 @@ CXXFLAGS +=  -std=c++11 -g
 
 #所有的.c文件
 CC_FILES = $(wildcard *.c)
-
 CC_OBJS = $(patsubst %.c, %.o, $(CC_FILES))
 
 #所有的.c++文件

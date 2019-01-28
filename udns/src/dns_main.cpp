@@ -67,9 +67,8 @@ int main(int argc, char* argv[])
 	resolve(&udnsresolve, "www.chenshuo.com");
 	resolve(&udnsresolve, "www.example.com");
 	resolve(&udnsresolve, "www.google.com");
-	resolve(&udnsresolve, "www.mntuow.com");
+	resolve(&udnsresolve, "www.yiwangwuying.com");
 	resolve(&udnsresolve, "www.baidu.com");
-	resolve(&udnsresolve, "www.anquye.com");
 	loop.loop();
 }
 

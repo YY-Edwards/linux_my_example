@@ -166,7 +166,8 @@ void UDNSResolver::onQueryResult(struct dns_rr_a4 *result, const Callback& callb
 	LOG_DEBUG << "onQueryResult " << status;
 	if (status != 0)
 	{
-		LOG_DEBUG << "\r\ndomain:[" << result->dnsa4_cname << "]"<<" parse err !";
+		//LOG_DEBUG << "\r\ndomain:[" << result->dnsa4_cname << "]"<<" parse err !";
+		LOG_DEBUG << "\r\ndomain parse err !";
 	}
 	struct sockaddr_in addr;
 	bzero(&addr, sizeof addr);

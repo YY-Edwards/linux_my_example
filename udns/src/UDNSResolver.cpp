@@ -134,7 +134,7 @@ bool UDNSResolver::resolve(const StringPiece& hostname, const Callback& cb)
 	int timeout = ::dns_timeouts(ctx_, -1, now);
 
 	LOG_DEBUG << "timeout " << timeout << " active " << timerActive_ << " " << queryData;
-	if (timerActive_)
+	if (!timerActive_)
 	{
 		loop_->runAfter(timeout, std::bind(&UDNSResolver::onTimer, this));
 		timerActive_ = true;
@@ -147,6 +147,7 @@ bool UDNSResolver::resolve(const StringPiece& hostname, const Callback& cb)
 
 void UDNSResolver::dns_query_a4(struct dns_ctx *ctx, struct dns_rr_a4 *result, void *data)
 {
+	LOG_DEBUG<< "data addr: "<< data ;
 	QueryData* query = static_cast<QueryData*>(data);
 
 	assert(ctx == query->owner->ctx_);
@@ -163,6 +164,10 @@ void UDNSResolver::onQueryResult(struct dns_rr_a4 *result, const Callback& callb
 {
 	int status = ::dns_status(ctx_);
 	LOG_DEBUG << "onQueryResult " << status;
+	if (status != 0)
+	{
+		LOG_DEBUG << "\r\ndomain:[" << result->dnsa4_cname << "]"<<" parse err !";
+	}
 	struct sockaddr_in addr;
 	bzero(&addr, sizeof addr);
 	addr.sin_family = AF_INET;
@@ -179,7 +184,7 @@ void UDNSResolver::onQueryResult(struct dns_rr_a4 *result, const Callback& callb
 			{
 				char buf[32];
 				::dns_ntop(AF_INET, &result->dnsa4_addr[i], buf, sizeof buf);
-				printf("  %s\n", buf);
+				printf(":%s\n", buf);
 			}
 		}
 		addr.sin_addr = result->dnsa4_addr[0];
@@ -202,7 +207,7 @@ void UDNSResolver::onTimer()
 	assert(timerActive_ == true);//首先确定定时被激活
 	time_t now = loop_->pollReturnTime().secondsSinceEpoch();//得到数据到达的时间戳
 	int timeout = ::dns_timeouts(ctx_, -1, now);//一次次的设置超时
-	LOG_DEBUG << "onTimer " << loop_->pollReturnTime().toString()
+	LOG_DEBUG << "\r\nonTimer " << loop_->pollReturnTime().toString()
 		<< " timeout " << timeout;
 
 	if (timeout < 0)//无挂起事件
@@ -211,6 +216,7 @@ void UDNSResolver::onTimer()
 	}
 	else//仍然未处理请求，再次定时回调
 	{
+		LOG_DEBUG << "run timer again.";
 		loop_->runAfter(timeout, std::bind(&UDNSResolver::onTimer, this));
 	}
 

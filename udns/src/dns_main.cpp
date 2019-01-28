@@ -32,7 +32,7 @@ void quit()
 //	addr:ip infomation.
 void resolveCallback(const string& host, const InetAddress& addr)
 {
-	LOG_INFO << "resolved" << host << " -> " << addr.toIp();
+	LOG_INFO << "\r\nresolved: " << host << " -> " << addr.toIp();
 
 }
 
@@ -52,10 +52,14 @@ void resolve(UDNSResolver* res, const string& host)
 int main(int argc, char* argv[])
 {
 
+	muduo::Logger::setLogLevel(Logger::TRACE);
+	LOG_INFO << "pid = " << getpid();
+
+
 	EventLoop loop;
 	g_loop = &loop;
 	//注意查看这里的quit()使用情况。
-	loop.runAfter(20.0, quit);
+	loop.runAfter(60.0, quit);
 
 	UDNSResolver udnsresolve(&loop);
 	udnsresolve.start();
@@ -63,7 +67,9 @@ int main(int argc, char* argv[])
 	resolve(&udnsresolve, "www.chenshuo.com");
 	resolve(&udnsresolve, "www.example.com");
 	resolve(&udnsresolve, "www.google.com");
-
+	resolve(&udnsresolve, "www.mntuow.com");
+	resolve(&udnsresolve, "www.baidu.com");
+	resolve(&udnsresolve, "www.anquye.com");
 	loop.loop();
 }
 

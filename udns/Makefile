@@ -36,6 +36,9 @@ all: libudns udns_app
 clean:
 	rm -f core $(UDNSDIR)/libudns.a
 	cd $(UDNSDIR) && make clean
+	-$(RM) $(foreach dir, $(OBJSDIR), $(wildcard $(dir)/*.o))
+		-$(RM) -rf bina/*
+
 
 libudns: $(UDNSDIR)/libudns.a
 
@@ -56,6 +59,8 @@ $(OBJSDIR):
 	
 $(ASDF):
 	mkdir -p $@		
+	
+	
 	
 #Resolver.o: Resolver.cc Resolver.h
 #	g++ $(CXXFLAGS) -c $<

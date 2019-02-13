@@ -78,6 +78,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\codec\Codec.h" />
+    <ClInclude Include="src\codec\Dispatcher.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\codec\Codec.cpp" />

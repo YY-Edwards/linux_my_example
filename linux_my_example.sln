@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "demultiplexer", "demultiple
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "udns", "udns\udns.vcxproj", "{73E4A7F2-DECD-42C6-86EF-3A09B8E3CF54}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protobuf", "protobuf\protobuf.vcxproj", "{B99B2561-59A8-45D4-992B-98B58B9DF02E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -51,6 +53,10 @@ Global
 		{73E4A7F2-DECD-42C6-86EF-3A09B8E3CF54}.Debug|Win32.Build.0 = Debug|Win32
 		{73E4A7F2-DECD-42C6-86EF-3A09B8E3CF54}.Release|Win32.ActiveCfg = Release|Win32
 		{73E4A7F2-DECD-42C6-86EF-3A09B8E3CF54}.Release|Win32.Build.0 = Release|Win32
+		{B99B2561-59A8-45D4-992B-98B58B9DF02E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B99B2561-59A8-45D4-992B-98B58B9DF02E}.Debug|Win32.Build.0 = Debug|Win32
+		{B99B2561-59A8-45D4-992B-98B58B9DF02E}.Release|Win32.ActiveCfg = Release|Win32
+		{B99B2561-59A8-45D4-992B-98B58B9DF02E}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

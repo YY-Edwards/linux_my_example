@@ -50,7 +50,7 @@ public:
 								muduo::Timestamp)> ProtobufMessageCallback;
 
 	typedef std::function<void(const muduo::net::TcpConnectionPtr&,
-								const muduo::net::Buffer*,
+								muduo::net::Buffer*,
 								muduo::Timestamp,
 								ErrorCode)> ErrorCallback;
 
@@ -70,7 +70,7 @@ public:
 	{
 	}
 
-	~ProtobufCodec ();
+	~ProtobufCodec () = default;
 
 
 	void onMessage(const muduo::net::TcpConnectionPtr& conn,
@@ -78,7 +78,7 @@ public:
 					muduo::Timestamp  receviceTime);
 
 	void send(const muduo::net::TcpConnectionPtr& conn,
-		const google::protobuf::Messsage& messge)
+		const google::protobuf::Message& message)
 	{
 		muduo::net::Buffer buf;
 		fillEmptyBuffer(&buf, message);//package google::message to Buffer

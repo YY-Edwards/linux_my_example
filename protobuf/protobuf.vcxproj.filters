@@ -18,10 +18,10 @@
     <ClInclude Include="src\codec\Codec.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\codec\Dispatcher.h">
+    <ClInclude Include="src\query_proto2.pb.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\codec\query_proto2.pb.h">
+    <ClInclude Include="src\dispatcher\Dispatcher.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -29,18 +29,18 @@
     <ClCompile Include="src\codec\Codec.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\codec\query_proto2.pb.cc">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="src\codec\codec_test.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\codec\dispatcher_test.cpp">
+    <ClCompile Include="src\dispatcher\dispatcher_test.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\query_proto2.pb.cc">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\codec\query_proto2.proto">
+    <None Include="src\query_proto2.proto">
       <Filter>源文件</Filter>
     </None>
   </ItemGroup>

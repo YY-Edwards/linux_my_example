@@ -32,28 +32,32 @@ export MUDUOINC = $(MUDUO_INCLUDE)
 #需要的库文件路径和优化参数
 #-std=c++11,需要链接支持C++11的静态库
 #protobuf 特殊标志：`pkg-config --cflags --libs protobuf`
+##include <zlib.h> //adler32 需要连接库：-lz
 LDFLAGS +=  \
 -L$(MUDUO_LIBRARY) \
 -L/usr/local/lib/   \
 -L/usr/lib/  \
 -lmuduo_net -lmuduo_base -pthread -lrt \
--`pkg-config --cflags --libs protobuf`
+-lz \
+`pkg-config --cflags --libs protobuf`
 
 #v1.1.0
 #-lmuduo_net_cpp11 -lmuduo_base_cpp11 -pthread -lrt
 
 .PHONY : all
-all: $(TARGET_CODEC_TEST) $(TARGET_DISPATCHER_TEST)
+all: $(TARGET_CODEC_TEST) $(TARGET_DISPATCHER_TEST) 
 
 
 $(TARGET_CODEC_TEST):$(OBJSDIR_CODEC) $(ASDF)
 	
 	$(MAKE) -C src/codec
+	$(MAKE) -C src
 	$(CXX) $(CXXFLAGS) $(OBJSDIR)/*.o $(OBJSDIR_CODEC)/*.o  -o $(ASDF)/$(TARGET_CODEC_TEST) $(LDFLAGS)
 	
 $(TARGET_DISPATCHER_TEST):$(OBJSDIR_DISPATCHER) $(ASDF)
 	
-	$(MAKE) -C src/codec
+	$(MAKE) -C src/dispatcher
+	#$(MAKE) -C src	
 	$(CXX) $(CXXFLAGS) $(OBJSDIR)/*.o $(OBJSDIR_DISPATCHER)/*.o  -o $(ASDF)/$(TARGET_DISPATCHER_TEST) $(LDFLAGS)	
 	
 $(OBJSDIR_CODEC):

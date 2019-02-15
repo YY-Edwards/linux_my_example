@@ -90,7 +90,7 @@ private:
 };
 
 
-class ProtobufDisapatcher
+class ProtobufDispatcher
 {
 public:
 
@@ -99,11 +99,11 @@ public:
 								muduo::Timestamp)> ProtobufMessageCallback;
 
 
-	explicit ProtobufDisapatcher(const ProtobufMessageCallback& defaultCb)
+	explicit ProtobufDispatcher(const ProtobufMessageCallback& defaultCb)
 		:defaultCallback_(defaultCb)
 	{
 	}
-	~ProtobufDisapatcher();
+	~ProtobufDispatcher() = default;
 
 	//定义一个模板成员函数：可以接受注册任意消息类型的T的回调，
 	//然后它创建一个模板化的派生类CallbackT<T>,这样消息的类型信息就保存在CallbackT<T>中

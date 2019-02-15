@@ -74,7 +74,7 @@ int main()
 	GOOGLE_PROTOBUF_VERIFY_VERSION;
 
 	test_down_pointer_cast();
-	ProtobufDisapatcher dispatcher(onUnkonwnMessageType);
+	ProtobufDispatcher dispatcher(onUnkonwnMessageType);
 	dispatcher.registerMessageCallback<edwards::Query>(onQuery);
 	dispatcher.registerMessageCallback<edwards::Answer>(onAnswer);
 	dispatcher.registerMessageCallback<edwards::Empty>(onEmpty);

@@ -79,9 +79,16 @@
   <ItemGroup>
     <ClInclude Include="src\codec\Codec.h" />
     <ClInclude Include="src\codec\Dispatcher.h" />
+    <ClInclude Include="src\codec\query_proto2.pb.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\codec\Codec.cpp" />
+    <ClCompile Include="src\codec\codec_test.cpp" />
+    <ClCompile Include="src\codec\dispatcher_test.cpp" />
+    <ClCompile Include="src\codec\query_proto2.pb.cc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\codec\query_proto2.proto" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

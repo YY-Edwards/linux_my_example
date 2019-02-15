@@ -217,6 +217,7 @@ void ProtobufCodec::fillEmptyBuffer(muduo::net::Buffer* buf, const google::proto
 			 {
 				 //形参为引用，实参传递过程不拷贝数据。
 				 //注意：上层回调需要区分message的具体类型，然后再回调不同的用户回调，这样逻辑清晰。
+				 LOG_DEBUG;
 				 messageCallback_(conn, message, receviceTime);//回调上层注册的函数
 				 buf->retrieve(kHeaderLen + len);
 

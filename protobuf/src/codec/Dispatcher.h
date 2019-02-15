@@ -107,6 +107,7 @@ public:
 
 	//定义一个模板成员函数：可以接受注册任意消息类型的T的回调，
 	//然后它创建一个模板化的派生类CallbackT<T>,这样消息的类型信息就保存在CallbackT<T>中
+	//registerMessageCallback()里的参数是使用的模板类里的成员变量，即相当于需要实现模板类外实现声明一个变量，那么需要用typename声明CallbackT<T>是一个类
 	template<typename T>
 	void registerMessageCallback(const typename CallbackT<T>::ProtobufMessageTCallback& callback)
 	{
@@ -142,6 +143,7 @@ private:
 	//生成proto文件时，已缓存了消息格式的所有类型。
 	//每个具体的消息类型都一个全局的Descriptor对象，其地址是不变的，可以用来做key
 	//value为不同回调的智能指针：类继承的动态绑定
+	//为什么是基类指针：这样既可以绑定基类对象也可以绑定派生类对象
 	typedef std::map<const google::protobuf::Descriptor*, std::shared_ptr<Callback> > CallbackMap;
 
 	CallbackMap callbacks_;

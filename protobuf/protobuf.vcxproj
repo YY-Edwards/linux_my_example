@@ -83,10 +83,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\codec\Codec.cpp" />
-    <ClCompile Include="src\codec\codec_test.cpp" />
-    <ClCompile Include="src\dispatcher\dispatcher_test.cpp" />
     <ClCompile Include="src\muduo_protobuf\client.cpp" />
     <ClCompile Include="src\query_proto2.pb.cc" />
+    <ClCompile Include="src\test\codec_test\codec_test.cpp" />
+    <ClCompile Include="src\test\dispatcher_test\dispatcher_test.cpp" />
+    <ClCompile Include="src\test\server_test\server.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\query_proto2.proto" />

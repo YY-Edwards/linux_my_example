@@ -38,6 +38,9 @@
     <ClCompile Include="src\query_proto2.pb.cc">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\muduo_protobuf\client.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\query_proto2.proto">

@@ -52,7 +52,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>F:\linux-project\example_edwards\linux_my_example\lib\release-install-cpp11\include;F:\linux-sever\linux_lib\vs2013_boost\boost_1_66_0;F:\linux-project\example_edwards\linux_my_example\protobuf\src\codec;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>F:\linux-project\example_edwards\linux_my_example\lib\release-install-cpp11\include;F:\linux-sever\linux_lib\vs2013_boost\boost_1_66_0;F:\linux-project\example_edwards\linux_my_example\protobuf\src\codec;F:\linux-project\example_edwards\linux_my_example\protobuf\src\dispatcher;F:\linux-project\example_edwards\linux_my_example\protobuf\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -85,6 +85,7 @@
     <ClCompile Include="src\codec\Codec.cpp" />
     <ClCompile Include="src\codec\codec_test.cpp" />
     <ClCompile Include="src\dispatcher\dispatcher_test.cpp" />
+    <ClCompile Include="src\muduo_protobuf\client.cpp" />
     <ClCompile Include="src\query_proto2.pb.cc" />
   </ItemGroup>
   <ItemGroup>

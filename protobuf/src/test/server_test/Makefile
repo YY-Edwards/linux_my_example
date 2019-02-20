@@ -4,6 +4,7 @@ CXX = g++
 #需要的头文件路径
 INC += \
 -I $(MUDUOINC) \
+-I $(OBJSDIR)/../src \
 -I /usr/include/
 
 
@@ -19,9 +20,9 @@ CXX_OBJS = $(patsubst %.cpp, %.o, $(CXX_FILES))
 
 all:$(CC_OBJS) $(CXX_OBJS)
 $(CC_OBJS):%.o:%.c
-	$(CC) -c $< -o $(OBJSDIR_MODULE)/$@  $(INC)  $(CCFLAGS) 
+	$(CC) -c $< -o $(OBJSDIR_DISPATCHER)/$@  $(INC)  $(CCFLAGS) 
 $(CXX_OBJS):%.o:%.cpp
-	$(CXX) -c $< -o $(OBJSDIR_MODULE)/$@  $(INC)  $(CXXFLAGS) 
+	$(CXX) -c $< -o $(OBJSDIR_DISPATCHER)/$@  $(INC)  $(CXXFLAGS) 
 clean:
 	$(RM) $(CC_OBJS)
 	$(RM) $(CXX_OBJS)

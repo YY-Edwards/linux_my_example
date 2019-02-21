@@ -72,15 +72,19 @@ public:
 	{
 
 		//注册收到确切protobuf类型的消息回调
-		dispatcher_.registerMessageCallback<edwards::Answer>(
-			std::bind(&FileUploadClient::onAnswer, this, _1, _2, _3));
-		dispatcher_.registerMessageCallback<edwards::Empty>(
-			std::bind(&FileUploadClient::onEmpty, this, _1, _2, _3));
-
+		dispatcher_.registerMessageCallback<edwards::UploadStartReponse>(
+			std::bind(&FileUploadClient::onUploadStartReponse, this, _1, _2, _3));
+		dispatcher_.registerMessageCallback<edwards::FileFrameTransferResponse>(
+			std::bind(&FileUploadClient::onFileFrameTransferResponse, this, _1, _2, _3));
+		dispatcher_.registerMessageCallback<edwards::UploadEndResponse>(
+			std::bind(&FileUploadClient::onUploadEndResponse, this, _1, _2, _3));
+		
 		client_.setConnectionCallback(
 			std::bind(&FileUploadClient::onConnection, this, _1));
 		client_.setMessageCallback(
 			std::bind(&ProtobufCodec::onMessage, &codec_, _1, _2, _3));
+
+		//loop_->runEvery();//request->response timeout resend.
 
 	}
 	~FileUploadClient() = default;
@@ -93,6 +97,8 @@ public:
 
 	bool isConnected() const//函数里内容不允许改变
 	{
+		//注意，可能跨线程调用，那么为了线程安全，需要上锁
+		//shared_ptr读写时需要加锁
 		//指针有效且已连接，则返回true
 		return conn_ && conn_->connected();
 	}
@@ -119,7 +125,6 @@ public:
 					avalidFileIds_.pop();
 					filesmap_[id] = theFile;//增加引用
 				}
-
 			}
 
 			if (id <= 0)
@@ -131,9 +136,13 @@ public:
 				edwards::UploadStartRequest startReq;
 				startReq.set_package_numb(pn_);
 				increasePackageNumn();
+				startReq.set_file_id(id);
+				startReq.set_file_name(theFile->name);
+				startReq.set_file_size(theFile->size);
+				startReq.set_file_fromat(theFile->format);
 
-				//if (messageToSend)
-				//	codec_.send(conn, *messageToSend);
+				codec_.send(conn_, startReq);
+
 			}
 		}
 
@@ -149,12 +158,11 @@ private:
 		if (pFile != NULL)
 		{
 			std::size_t found = path.find_last_of("/");
-			if (found!=std::string::npos)
-			{
-				LOG_DEBUG << "file path: " << path.substr(0, found);
-				LOG_DEBUG << "file name: " << path.substr(found+1);
-				file->name = path.substr(found+1);
-			}
+			assert(found != std::string::npos);	
+			LOG_DEBUG << "file path: " << path.substr(0, found);
+			LOG_DEBUG << "file name: " << path.substr(found+1);
+			file->name = path.substr(found+1);
+
 			struct stat st;
 			int ret = stat(path.c_str(), &st);
 			assert(ret == 0);
@@ -177,27 +185,49 @@ private:
 			pn_ = 0x1000;
 		}
 	}
-	void onAnswer(const muduo::net::TcpConnectionPtr& conn,
-		const AnswerPtr& message,
+	void onUploadStartReponse(const muduo::net::TcpConnectionPtr& conn,
+		const UploadStartReponsePtr& message,
 		muduo::Timestamp t)
 	{
-		LOG_DEBUG << "onAnswer: \n" << message->GetTypeName()
+		LOG_DEBUG << "onUploadStartReponse: " << message->GetTypeName()
+			<< "\n"
 			<< message->DebugString();
 
-		message->PrintDebugString();
+
+
+		edwards::FileFrameTransferRequest frameReq;
+		frameReq.set_package_numb(pn_);
+		increasePackageNumn();
+		frameReq.set_file_id(id);
+		
+
+		codec_.send(conn_, frameReq);
+		
 
 	}
 
-	void onEmpty(const muduo::net::TcpConnectionPtr& conn,
-		const EmptyPtr& message,
+	void onFileFrameTransferResponse(const muduo::net::TcpConnectionPtr& conn,
+		const FileFrameTransferResponsePtr& message,
 		muduo::Timestamp t)
 	{
 
-		LOG_DEBUG << "onEmpty: \n" << message->GetTypeName()
+		LOG_DEBUG << "onFileFrameTransferResponse: " << message->GetTypeName()
+			<< "\n"
 			<< message->DebugString();
 
-		message->PrintDebugString();
 	}
+
+	void onUploadEndResponse(const muduo::net::TcpConnectionPtr& conn,
+		const UploadEndResponsePtr& message,
+		muduo::Timestamp t)
+	{
+
+		LOG_DEBUG << "onUploadEndResponse: " << message->GetTypeName()
+			<< "\n"
+			<< message->DebugString();
+
+	}
+
 
 	void onUnknowMessage(const TcpConnectionPtr& conn,
 		const MessagePtr& message,
@@ -206,6 +236,26 @@ private:
 		LOG_DEBUG << "onUnknowMessage: \n" << message->GetTypeName();
 	}
 
+	void onWriteComplete(const TcpConnectionPtr& conn)
+	{
+		LOG_DEBUG << "\r\n";
+		conn_->startRead();
+		//重新设置低水位回调（发送为空）：以免为空的时候频繁回调
+		conn_->setWriteCompleteCallback(muduo::net::WriteCompleteCallback());
+	}
+
+	void onHighWaterMark(const TcpConnectionPtr& conn, size_t len)
+	{
+		LOG_DEBUG << " onHighWaterMark " << conn->name()
+			<< " bytes " << len;
+
+		if (conn_ == conn)
+		{
+			conn_->stopRead();
+			conn_->setWriteCompleteCallback(
+				std::bind(&FileUploadClient::onWriteComplete, this, _1));
+		}
+	}
 
 	void onConnection(const TcpConnectionPtr& conn)
 	{
@@ -216,6 +266,10 @@ private:
 		if (conn->connected())
 		{
 			conn_ = conn;
+			//设置高水位
+			conn_->setHighWaterMarkCallback(
+				std::bind(&FileUploadClient::onHighWaterMark, this, _1, _2), 
+				64*1024);
 			{
 				MutexLockGuard lock(mutex_);
 				assert(avalidFileIds_.empty());

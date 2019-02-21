@@ -90,6 +90,7 @@
     <ClCompile Include="src\test\server_test\server.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="src\file_proto_api\file_upload_proto2.proto" />
     <None Include="src\query_proto2.proto" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

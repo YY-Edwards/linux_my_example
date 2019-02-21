@@ -49,5 +49,8 @@
     <None Include="src\query_proto2.proto">
       <Filter>源文件</Filter>
     </None>
+    <None Include="src\file_proto_api\file_upload_proto2.proto">
+      <Filter>源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>

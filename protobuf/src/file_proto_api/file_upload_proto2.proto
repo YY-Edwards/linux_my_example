@@ -1,0 +1,68 @@
+syntax = "proto2";
+package edwards;
+option java_package = "edwards.file_upload.tests";
+option java_outer_classname = "FileUploadProtos";
+
+
+message UploadStartRequest{
+
+	required int64		package_numb 		= 1;
+	required int64		file_id 			= 2;//允许peer同一连接发送多个文件，最大支持同时发送5个文件，file_id用以确定文件的唯一性
+	required string		file_name 			= 3;
+	required fixed64	file_size 			= 4;
+	required string		file_fromat			= 5;//".xxx"
+
+	optional string		file_storage_path	= 6;
+}
+
+message UploadStartReponse{
+
+	required int64		package_numb 		= 1;
+	required int64		file_id 			= 2;
+	required string		result 				= 3;
+
+	optional string		reason				= 4;
+}
+
+message FileFrameTransferRequest{
+	
+	required int64		package_numb 		= 1;
+	required int64		file_id 			= 2;
+	required int64		frame_size 			= 3;
+	required bytes		frame_datas			= 4;
+	
+}
+
+message FileFrameTransferResponse{
+
+	required int64		package_numb 		= 1;
+	required int64		file_id 			= 2;
+	required int64		frame_size 			= 3;
+	required string		result 				= 4;
+
+	optional string		reason				= 5;
+
+}
+
+
+
+message UploadEndRequest{
+
+	required int64		package_numb 		= 1;
+	required int64		file_id 			= 2;
+	required string		file_name 			= 3;
+
+}
+
+message UploadEndResponse{
+
+	required int64		package_numb 		= 1;
+	required int64		file_id 			= 2;
+	required string		file_name 			= 3;
+	required string		result 				= 4;
+
+	optional string		reason				= 5;
+
+
+
+}

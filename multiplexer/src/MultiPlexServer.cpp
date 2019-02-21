@@ -117,7 +117,7 @@ void multiplexer::MultiPlexServer::onClientConnection(const TcpConnectionPtr& co
 		int id = -1;
 		{
 			MutexLockGuard lock(mutex_);
-			if (!availdIds_.empty())//为空/耗尽
+			if (!availdIds_.empty())//不为空
 			{
 				id = availdIds_.front();//返回一个id使用
 				availdIds_.pop();//出队列

@@ -145,7 +145,7 @@ void multiplexer::MultiPlexServer::onClientConnection(const TcpConnectionPtr& co
 		{
 			//先取出占用的id
 			int id = boost::any_cast<int>(conn->getContext());
-			assert(id > 0 && id < kMaxConns);
+			assert(id > 0 && id <= kMaxConns);
 			char buf[256];
 			snprintf(buf, sizeof(buf), "CONN %d FROM %s IS DOWN\r\n", id,
 				conn->peerAddress().toIpPort().c_str());

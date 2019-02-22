@@ -18,12 +18,15 @@
 #include <muduo/net/EventLoop.h>
 #include <muduo/net/TcpClient.h>
 #include <muduo/base/Mutex.h>
+#include <muduo/net/EventLoopThread.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdio.h>
 #include <unistd.h>
-
+#include <iostream>
+#include <malloc.h>
+#include <sys/resource.h>
 
 #include <map>
 #include <set>
@@ -35,6 +38,7 @@ using namespace muduo::net;
 
 const int8_t	kMaxFileId = 5;
 const int8_t	kMaxPackageNumb = 0x9000;
+const int		kBufSize = 10 * 1024;//10k
 
 typedef std::shared_ptr<FILE> FilePtr;
 
@@ -52,6 +56,9 @@ class FileUploadClient :noncopyable
 public:
 
 	typedef std::shared_ptr<FileInfo> FileInfoPtr;
+	typedef std::map<int, FileInfoPtr> FileContainer;
+	typedef std::shared_ptr<FileContainer> MapPtr;
+
 	typedef std::shared_ptr<edwards::UploadStartRequest> UploadStartRequestPtr;
 	typedef std::shared_ptr<edwards::UploadStartReponse> UploadStartReponsePtr;
 	typedef std::shared_ptr<edwards::FileFrameTransferRequest> FileFrameTransferRequestPtr;
@@ -98,9 +105,10 @@ public:
 	bool isConnected() const//函数里内容不允许改变
 	{
 		//注意，可能跨线程调用，那么为了线程安全，需要上锁
-		//shared_ptr读写时需要加锁
+		//shared_ptr多线程读写时需要加锁
 		//指针有效且已连接，则返回true
-		return conn_ && conn_->connected();
+		MutexLockGuard lock(pMutex_);
+		return conn_ && conn_->connected();//读操作
 	}
 
 
@@ -124,6 +132,7 @@ public:
 					id = avalidFileIds_.front();
 					avalidFileIds_.pop();
 					filesmap_[id] = theFile;//增加引用
+					//(*filesmap_)[id] = theFile;
 				}
 			}
 
@@ -133,19 +142,13 @@ public:
 			}
 			else
 			{
-				edwards::UploadStartRequest startReq;
-				startReq.set_package_numb(pn_);
-				increasePackageNumn();
-				startReq.set_file_id(id);
-				startReq.set_file_name(theFile->name);
-				startReq.set_file_size(theFile->size);
-				startReq.set_file_fromat(theFile->format);
-
-				codec_.send(conn_, startReq);
-
+				sendStartReqToBackend(id, theFile);
 			}
 		}
-
+		else
+		{
+			LOG_DEBUG << "open file failure!";
+		}
 	}
 
 private:
@@ -170,12 +173,68 @@ private:
 			
 			
 			//定制删除器
-			FilePtr newCtx(pFile, fclose);//当离开作用域是，会自动调用fclose
+			FilePtr newCtx(pFile, onCloseFileDescriptor);//当离开作用域是，会自动调用fclose
 			file->ctx = newCtx;//增加引用
 			file->format = "NULL";
 			file->storagePath = "NULL";
 		}		
 		return file;
+	}
+	void onCloseFileDescriptor(FILE *fp)
+	{
+		LOG_DEBUG << "close fp. ";
+		fclose(fp);
+	}
+	void sendStartReqToBackend(int assignedId, const FileInfoPtr& file)
+	{
+		edwards::UploadStartRequest startReq;
+		startReq.set_package_numb(pn_);
+		increasePackageNumn();
+		startReq.set_file_id(assignedId);
+		startReq.set_file_name(file->name);
+		startReq.set_file_size(file->size);
+		startReq.set_file_fromat(file->format);
+		{
+			MutexLockGuard lock(pMutex_);
+			codec_.send(conn_, startReq);
+		}
+	}
+	void sendFrameReqToBackend(int assignedId, const FileInfoPtr& file)
+	{
+		char buf[kBufSize];
+		size_t nread = fread(buf, 1, sizeof buf, (file->ctx).get());
+		if (nread > 0)
+		{
+			edwards::FileFrameTransferRequest frameReq;
+			frameReq.set_package_numb(pn_);
+			increasePackageNumn();
+			frameReq.set_file_id(assignedId);
+			frameReq.set_frame_size(nread);
+			frameReq.set_frame_datas(buf, nread);
+			{
+				MutexLockGuard lock(pMutex_);
+				codec_.send(conn_, frameReq);
+			}
+
+		}
+		else
+		{
+			assert(nread == 0);
+			LOG_DEBUG << "send UploadEnd request.";
+			sendEndReqToBackend(assignedId, file);
+		}
+	}
+	void sendEndReqToBackend(int assignedId, const FileInfoPtr& file)
+	{
+		edwards::UploadEndRequest EndReq;
+		EndReq.set_package_numb(pn_);
+		increasePackageNumn();
+		EndReq.set_file_id(assignedId);
+		EndReq.set_file_name(file->name);
+		{
+			MutexLockGuard lock(pMutex_);
+			codec_.send(conn_, EndReq);
+		}
 	}
 	void increasePackageNumn()
 	{ 
@@ -193,17 +252,24 @@ private:
 			<< "\n"
 			<< message->DebugString();
 
+		int recvId = message->file_id();
+		LOG_DEBUG << "recv file id: " << recvId;
 
-
-		edwards::FileFrameTransferRequest frameReq;
-		frameReq.set_package_numb(pn_);
-		increasePackageNumn();
-		frameReq.set_file_id(id);
-		
-
-		codec_.send(conn_, frameReq);
-		
-
+		{
+			FileInfoPtr findFile;
+			{
+				MutexLockGuard lock(mutex_);
+				FileContainer::iterator it = filesmap_.find(recvId);
+				if (it != filesmap_.end())//存在
+				{
+					findFile = (it->second);//增加引用
+				}
+			}
+			if (findFile)
+			{
+				sendFrameReqToBackend(recvId, findFile);
+			}
+		}
 	}
 
 	void onFileFrameTransferResponse(const muduo::net::TcpConnectionPtr& conn,
@@ -215,6 +281,23 @@ private:
 			<< "\n"
 			<< message->DebugString();
 
+		int recvId = message->file_id();
+		LOG_DEBUG << "recv file id: " << recvId;
+
+		FileInfoPtr findFile;
+		{
+			MutexLockGuard lock(mutex_);
+			FileContainer::iterator it = filesmap_.find(recvId);
+			if (it != filesmap_.end())//存在
+			{
+				findFile = (it->second);//增加引用
+			}
+		}
+		if (findFile)
+		{
+			sendFrameReqToBackend(recvId, findFile);
+		}
+		
 	}
 
 	void onUploadEndResponse(const muduo::net::TcpConnectionPtr& conn,
@@ -226,6 +309,17 @@ private:
 			<< "\n"
 			<< message->DebugString();
 
+		//取出已占用id
+		int Id = message->file_id();
+		assert(Id > 0 && Id <= kMaxFileId);
+		{
+			MutexLockGuard lock(mutex_);
+			avalidFileIds_.push(Id);//回收已分配的id
+			LOG_DEBUG;
+			auto numb = filesmap_.erase(Id);//删除已上传的文件信息
+			LOG_DEBUG;
+			assert(numb != 0);
+		}
 	}
 
 
@@ -239,9 +333,9 @@ private:
 	void onWriteComplete(const TcpConnectionPtr& conn)
 	{
 		LOG_DEBUG << "\r\n";
-		conn_->startRead();
+		conn->startRead();
 		//重新设置低水位回调（发送为空）：以免为空的时候频繁回调
-		conn_->setWriteCompleteCallback(muduo::net::WriteCompleteCallback());
+		conn->setWriteCompleteCallback(muduo::net::WriteCompleteCallback());
 	}
 
 	void onHighWaterMark(const TcpConnectionPtr& conn, size_t len)
@@ -249,12 +343,9 @@ private:
 		LOG_DEBUG << " onHighWaterMark " << conn->name()
 			<< " bytes " << len;
 
-		if (conn_ == conn)
-		{
-			conn_->stopRead();
-			conn_->setWriteCompleteCallback(
+		conn->stopRead();
+		conn->setWriteCompleteCallback(
 				std::bind(&FileUploadClient::onWriteComplete, this, _1));
-		}
 	}
 
 	void onConnection(const TcpConnectionPtr& conn)
@@ -263,9 +354,10 @@ private:
 			<< conn->peerAddress().toIpPort() << " is "
 			<< (conn->connected() ? "UP" : "DOWN");
 
+		MutexLockGuard lock(pMutex_);
 		if (conn->connected())
 		{
-			conn_ = conn;
+			conn_ = conn;//写操作
 			//设置高水位
 			conn_->setHighWaterMarkCallback(
 				std::bind(&FileUploadClient::onHighWaterMark, this, _1, _2), 
@@ -289,8 +381,10 @@ private:
 				{
 					avalidFileIds_.pop();
 				}
+				LOG_DEBUG;
+				filesmap_.clear();
+				LOG_DEBUG;
 			}
-
 			loop_->quit();
 		}
 	}
@@ -306,6 +400,96 @@ private:
 
 	MutexLock			mutex_;
 
-	std::map<int, FileInfoPtr>	filesmap_;
-	std::queue<int>				avalidFileIds_;
+	mutable MutexLock			pMutex_;
+
+	//FileContainer				filesmap_;
+	//mutable可以保证在const修饰的成员函数中修改某个不影响类状态的变量
+	mutable MutexLock			mapMutex_;
+	//MapPtr					filesmap_;//有两个绑在一起用，那么互斥时暂不使用COW手法
+	FileContainer				filesmap_;//多个文件的信息表
+	std::queue<int>				avalidFileIds_;//存放允许的传输文件ID号
 };
+
+
+
+void memstat()
+{
+	//valgrind也是泄露检查工具，比较全面
+
+	//统计本进程具体的内存使用情况，精确到字节
+
+	//Arena 0://第一个arena（每个线程分配一个arena），这里只有一个线程
+	//system bytes     =     135168		//本线程从操作系统获得的动态内存，这里是132KB
+	//in use bytes     =       1152		//本线程在使用的动态内存，1152字节
+	//Total (incl. mmap):				//总的使用情况，各个线程使用动态内存的累加值
+	//system bytes     =     135168		//本进程从操作系统获得的动态内存，这里是132KB
+	//in use bytes     =       1152		//本进程在使用的动态内存，1152字节
+	//max mmap regions =          0		//当一次申请内存超过128KB（32位操作系统）或1MB（64位操作系统）时，会增加mmap区域，这里统计使用mmap区域的个数
+	//max mmap bytes   =          0		//mmap区域对应内存大小
+
+
+	malloc_stats();//用以检查内存泄露
+}
+
+
+EventLoop* g_loop = NULL;
+string g_topic;
+
+int main(int argc, char* argv[])
+{
+
+	muduo::Logger::setLogLevel(Logger::TRACE);
+	LOG_INFO << "pid = " << getpid();
+
+	if (argc < 2)
+	{
+		printf("Usage: %s [ip:listen_port] [-] \n", argv[0]);
+	}
+	else
+	{
+		string hostport = argv[1];
+		auto colon = hostport.find(':');
+		if (colon != string::npos)
+		{
+			string hostip = hostport.substr(0, colon);
+			const uint16_t port = static_cast<uint16_t>(atoi(hostport.c_str() + colon + 1));
+			g_topic = argv[2];
+			if (g_topic == "-")
+			{
+				{
+					// set max virtual memory to 256MB.
+					size_t kOneMB = 1024 * 1024;
+					rlimit rl = { 256 * kOneMB, 256 * kOneMB };
+					setrlimit(RLIMIT_AS, &rl);
+				}
+
+				const uint16_t listenPort = static_cast<uint16_t>(atoi(argv[1]));
+
+				EventLoopThread loopThread;
+				g_loop = loopThread.startLoop();
+				g_loop->runEvery(7.0, memstat);//间隔查询内存分配
+
+				FileUploadClient client(g_loop, InetAddress(hostip, port), "UpLoadFileClient");
+				client.connect();
+
+				string line;
+				//注意这里默认回车符停止读入, 按Ctrl + Z或键入EOF回车即可退出循环
+				while (getline(std::cin, line))//手动控制上传文件
+				{
+					if (client.isConnected())
+					{
+						client.uploadTheFile(line);
+					}
+				}
+
+				client.disconnect();
+				LOG_DEBUG;
+				CurrentThread::sleepUsec(5000 * 1000);//5s
+				LOG_DEBUG;
+			}
+		}
+		
+	}
+
+	printf("\r\n=>>exit file_client.cpp \r\n");
+}

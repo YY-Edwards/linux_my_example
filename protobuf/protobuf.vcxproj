@@ -80,6 +80,7 @@
     <ClInclude Include="src\codec\Codec.h" />
     <ClInclude Include="src\dispatcher\Dispatcher.h" />
     <ClInclude Include="src\file_proto_api\file_upload_proto2.pb.h" />
+    <ClInclude Include="src\file_server\FileServer.h" />
     <ClInclude Include="src\query_proto2.pb.h" />
   </ItemGroup>
   <ItemGroup>

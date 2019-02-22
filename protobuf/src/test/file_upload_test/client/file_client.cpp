@@ -427,7 +427,7 @@ void memstat()
 	//max mmap regions =          0		//当一次申请内存超过128KB（32位操作系统）或1MB（64位操作系统）时，会增加mmap区域，这里统计使用mmap区域的个数
 	//max mmap bytes   =          0		//mmap区域对应内存大小
 
-
+	LOG_INFO << "mem check:\n";
 	malloc_stats();//用以检查内存泄露
 }
 
@@ -438,7 +438,7 @@ string g_topic;
 int main(int argc, char* argv[])
 {
 
-	muduo::Logger::setLogLevel(Logger::TRACE);
+	muduo::Logger::setLogLevel(Logger::DEBUG);
 	LOG_INFO << "pid = " << getpid();
 
 	if (argc < 2)

@@ -37,7 +37,7 @@ using namespace muduo;
 using namespace muduo::net;
 
 const int8_t	kMaxFileId = 5;
-const int8_t	kMaxPackageNumb = 0x9000;
+const int16_t	kMaxPackageNumb = 0x9000;
 const int		kBufSize = 10 * 1024;//10k
 
 typedef std::shared_ptr<FILE> FilePtr;
@@ -180,7 +180,7 @@ private:
 		}		
 		return file;
 	}
-	void onCloseFileDescriptor(FILE *fp)
+	static void onCloseFileDescriptor(FILE *fp)
 	{
 		LOG_DEBUG << "close fp. ";
 		fclose(fp);

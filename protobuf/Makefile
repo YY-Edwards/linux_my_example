@@ -26,6 +26,7 @@ TARGET_CODEC_TEST 		= codec_test
 TARGET_DISPATCHER_TEST 	= dispatcher_test
 TARGET_CLIENT_TEST 		= client_test
 TARGET_SERVER_TEST 		= server_test
+TARGET_FILEUPLOAD_CLIENT_TEST 	= file_upload_client_test
 #TARGET = tcpreplay_app
 
 #需要传递到下层的变量
@@ -38,6 +39,7 @@ export OBJSDIR_TEST_CODEC 			= $(OBJSDIR_TEST)/codec
 export OBJSDIR_TEST_DISPATCHER 		= $(OBJSDIR_TEST)/dispatcher
 export OBJSDIR_TEST_CLIENT 			= $(OBJSDIR_TEST)/client
 export OBJSDIR_TEST_SERVER 			= $(OBJSDIR_TEST)/server
+export OBJSDIR_TEST_FILE_UPLOAD_C 	= $(OBJSDIR_TEST)/file_upload_client
 export OBJSDIR_MODULE 				= $(OBJSDIR)/module
  
 export ASDF 						= $(shell pwd)/bina
@@ -61,7 +63,8 @@ LDFLAGS +=  \
 #Makefile中的第一个目标会被作为其默认目标。我们声明了一个“all”的伪目标，其依赖于其它三个目标。由于伪目标的特性是，总是被执行的，所以其依赖的那三个目标就总是不如“all”这个目标新。
 #所以，其它三个目标的规则总是会被决议。也就达到了我们一口气生成多个目标的目的。“.PHONY : all”声明了“all”这个目标为“伪目标”
 .PHONY : all
-all: $(TARGET_CODEC_TEST) $(TARGET_DISPATCHER_TEST) $(TARGET_CLIENT_TEST) $(TARGET_SERVER_TEST)
+all: $(TARGET_CODEC_TEST) $(TARGET_DISPATCHER_TEST) $(TARGET_CLIENT_TEST) $(TARGET_SERVER_TEST) \
+$(TARGET_FILEUPLOAD_CLIENT_TEST) 
 
 
 
@@ -86,9 +89,19 @@ $(TARGET_CLIENT_TEST):$(OBJSDIR_TEST_CLIENT) $(OBJSDIR_MODULE) $(ASDF)
 $(TARGET_SERVER_TEST):$(OBJSDIR_TEST_SERVER) $(OBJSDIR_MODULE) $(ASDF)
 	$(MAKE) -C src/test/server_test
 	$(CXX) $(CXXFLAGS)  $(OBJSDIR)/*.o $(OBJSDIR_MODULE)/*.o $(OBJSDIR_TEST_SERVER)/*.o  -o $(ASDF)/$(TARGET_SERVER_TEST) $(LDFLAGS)	
+
+
+$(TARGET_FILEUPLOAD_CLIENT_TEST):$(OBJSDIR_TEST_FILE_UPLOAD_C) $(OBJSDIR_MODULE) $(ASDF)
+	$(MAKE) -C src/test/file_upload_test/client
+	$(MAKE) -C src/file_proto_api
+	$(CXX) $(CXXFLAGS)  $(OBJSDIR)/*.o $(OBJSDIR_MODULE)/*.o $(OBJSDIR_TEST_FILE_UPLOAD_C)/*.o  -o $(ASDF)/$(TARGET_FILEUPLOAD_CLIENT_TEST) $(LDFLAGS)	
+	
 	
 	
 #创建目标文件路径	
+$(OBJSDIR_TEST_FILE_UPLOAD_C):
+	mkdir -p $@	
+
 $(OBJSDIR_TEST_CLIENT):
 	mkdir -p $@	
 	
@@ -119,6 +132,7 @@ clean:
 	-$(RM) $(foreach dir, $(OBJSDIR_TEST_CODEC), $(wildcard $(dir)/*.o))
 	-$(RM) $(foreach dir, $(OBJSDIR_TEST_DISPATCHER), $(wildcard $(dir)/*.o))
 	-$(RM) $(foreach dir, $(OBJSDIR_TEST_SERVER), $(wildcard $(dir)/*.o))
+	-$(RM) $(foreach dir, $(OBJSDIR_TEST_FILE_UPLOAD), $(wildcard $(dir)/*.o))
 	-$(RM) $(foreach dir, $(OBJSDIR_MODULE), $(wildcard $(dir)/*.o))
 	-$(RM) $(foreach dir, $(OBJSDIR), $(wildcard $(dir)/*.o))
 	-$(RM) -rf objs

@@ -47,10 +47,10 @@
     <ClCompile Include="src\file_proto_api\file_upload_proto2.pb.cc">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\test\file_upload_test\file_client.cpp">
+    <ClCompile Include="src\test\client_test\client.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\test\client_test\client.cpp">
+    <ClCompile Include="src\test\file_upload_test\client\file_client.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

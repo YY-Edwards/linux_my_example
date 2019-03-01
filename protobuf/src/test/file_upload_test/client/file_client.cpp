@@ -70,7 +70,7 @@ public:
 	explicit FileUploadClient(EventLoop *loop,
 		const InetAddress& serverAddr,
 		const std::string& name)
-		:loop_(loop)
+		: loop_(loop)
 		, pn_(0x1000)
 		, client_(loop, serverAddr, name)
 		, dispatcher_(std::bind(&FileUploadClient::onUnknowMessage, this, _1, _2, _3))//注册一个无法识别的默认的回调
@@ -79,8 +79,8 @@ public:
 	{
 
 		//注册收到确切protobuf类型的消息回调
-		dispatcher_.registerMessageCallback<edwards::UploadStartReponse>(
-			std::bind(&FileUploadClient::onUploadStartReponse, this, _1, _2, _3));
+		dispatcher_.registerMessageCallback<edwards::UploadStartResponse>(
+			std::bind(&FileUploadClient::onUploadStartResponse, this, _1, _2, _3));
 		dispatcher_.registerMessageCallback<edwards::FileFrameTransferResponse>(
 			std::bind(&FileUploadClient::onFileFrameTransferResponse, this, _1, _2, _3));
 		dispatcher_.registerMessageCallback<edwards::UploadEndResponse>(
@@ -244,8 +244,8 @@ private:
 			pn_ = 0x1000;
 		}
 	}
-	void onUploadStartReponse(const muduo::net::TcpConnectionPtr& conn,
-		const UploadStartReponsePtr& message,
+	void onUploadStartResponse(const muduo::net::TcpConnectionPtr& conn,
+		const UploadStartResponsePtr& message,
 		muduo::Timestamp t)
 	{
 		LOG_DEBUG << "onUploadStartReponse: " << message->GetTypeName()

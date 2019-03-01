@@ -15,7 +15,7 @@ message UploadStartRequest{
 	optional string		file_storage_path	= 6;
 }
 
-message UploadStartReponse{
+message UploadStartResponse{
 
 	required int64		package_numb 		= 1;
 	required int64		file_id 			= 2;

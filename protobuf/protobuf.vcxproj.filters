@@ -62,6 +62,9 @@
     <ClCompile Include="src\taskthreadpool\TaskThreadPool.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\file_server\FileServer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\query_proto2.proto">

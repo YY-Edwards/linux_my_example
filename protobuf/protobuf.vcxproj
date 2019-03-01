@@ -87,6 +87,7 @@
   <ItemGroup>
     <ClCompile Include="src\codec\Codec.cpp" />
     <ClCompile Include="src\file_proto_api\file_upload_proto2.pb.cc" />
+    <ClCompile Include="src\file_server\FileServer.cpp" />
     <ClCompile Include="src\query_proto2.pb.cc" />
     <ClCompile Include="src\taskthreadpool\TaskThreadPool.cpp" />
     <ClCompile Include="src\test\client_test\client.cpp" />

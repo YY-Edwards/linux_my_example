@@ -1,5 +1,5 @@
 /**
-* File server implementation,FileServer.h
+* File server header,FileServer.h
 *
 * @platform: linux-4.4.0-62-generic
 *
@@ -15,6 +15,7 @@
 #include "Codec.h"
 #include "Dispatcher.h"
 #include "file_upload_proto2.pb.h"
+#include "taskthreadpool/TaskThreadPool.h"
 
 #include <muduo/base/Logging.h>
 #include <muduo/net/EventLoop.h>
@@ -39,7 +40,6 @@ namespace edwards
 	{
 	public:
 
-
 		typedef std::shared_ptr<FILE> FilePtr;
 
 		enum FileStateCode
@@ -49,7 +49,7 @@ namespace edwards
 			kWriteFinished
 		};
 
-		struct UserUploadFileInfo
+		struct ClientUploadFileInfo
 		{
 			FilePtr			ctx;
 			std::string		name;
@@ -66,7 +66,7 @@ namespace edwards
 		};
 
 
-		typedef std::shared_ptr<UserUploadFileInfo> FileInfoPtr;
+		typedef std::shared_ptr<ClientUploadFileInfo> FileInfoPtr;
 
 		ClientFile();
 		~ClientFile();
@@ -77,7 +77,7 @@ namespace edwards
 
 	private:
 
-		void threadFunc();
+		void writeFileFunc();
 
 		muduo::BlockingQueue<DataUnit>	queue_;
 		std::map<int, FileInfoPtr>	fileList_;
@@ -93,117 +93,49 @@ namespace edwards
 
 
 		typedef std::shared_ptr<edwards::UploadStartRequest> UploadStartRequestPtr;
-		typedef std::shared_ptr<edwards::UploadStartReponse> UploadStartReponsePtr;
+		//typedef std::shared_ptr<edwards::UploadStartReponse> UploadStartReponsePtr;
 		typedef std::shared_ptr<edwards::FileFrameTransferRequest> FileFrameTransferRequestPtr;
-		typedef std::shared_ptr<edwards::FileFrameTransferResponse> FileFrameTransferResponsePtr;
+		//typedef std::shared_ptr<edwards::FileFrameTransferResponse> FileFrameTransferResponsePtr;
 		typedef std::shared_ptr<edwards::UploadEndRequest> UploadEndRequestPtr;
-		typedef std::shared_ptr<edwards::UploadEndResponse> UploadEndResponsePtr;
-
-		std::vector<std::pair<std::pair<TcpConnectionPtr, FilePtr>, std::string>> datas_;
+		//typedef std::shared_ptr<edwards::UploadEndResponse> UploadEndResponsePtr;
 
 		explicit FileServer(EventLoop *loop,
-			const InetAddress& listenAddr,
-			const std::string& name)
-			:loop_(loop)
-			, server_(loop, listenAddr, name)
-			, dispatcher_(std::bind(&FileServer::onUnknowMessage, this, _1, _2, _3))//注册一个无法识别的默认的回调
-			//还可以注册一个解析出错的用户回调
-			, codec_(std::bind(&ProtobufDispatcher::onProtobufMessage, &dispatcher_, _1, _2, _3), NULL)
-		{
-
-			//注册收到确切protobuf类型的消息回调
-			dispatcher_.registerMessageCallback<edwards::Query>(
-				std::bind(&FileServer::onQuery, this, _1, _2, _3));
-			dispatcher_.registerMessageCallback<edwards::Answer>(
-				std::bind(&FileServer::onAnswer, this, _1, _2, _3));
-
-			server_.setConnectionCallback(
-				std::bind(&FileServer::onConnection, this, _1));
-			server_.setMessageCallback(
-				std::bind(&ProtobufCodec::onMessage, &codec_, _1, _2, _3));
-
-		}
+							const InetAddress& listenAddr,
+							const std::string& name);
 		~FileServer() = default;
 
-		void start()
-		{
-			server_.start();
-		}
+		void setThreadNumb(int numb);
+		void start();
 
 
 	private:
 
 
 
-		void onQuery(const muduo::net::TcpConnectionPtr& conn,
-			const QueryPtr& message,
-			muduo::Timestamp t)
-		{
-			LOG_DEBUG << "onQuery: \n" << message->GetTypeName()
-				<< message->DebugString();
+		void sendStartResponse(int recvPn, const ClientFile::FileInfoPtr& file);
+		void sendFrameResponse(int recvPn, const ClientFile::FileInfoPtr& file);
+		void sendEndResponse(int recvPn, const ClientFile::FileInfoPtr& file);
 
-			message->PrintDebugString();
+		void onUploadStartRequest(const muduo::net::TcpConnectionPtr& conn,
+								  const UploadStartRequestPtr& message,
+								  muduo::Timestamp t);
 
+		void onFileFrameTransferRequest(const muduo::net::TcpConnectionPtr& conn,
+										const FileFrameTransferRequestPtr& message,
+										muduo::Timestamp t);
 
-			edwards::Answer answer;
-			answer.set_id(message->id());
-			answer.set_questioner(message->questioner());
-			answer.set_answerer("Your teacher");
-			answer.add_solution("Jump!");
-			answer.add_solution("Win!");
-
-			messageToSend = &answer;
-
-			codec_.send(conn, (*messageToSend));
-
-
-		}
-
-		void onAnswer(const muduo::net::TcpConnectionPtr& conn,
-			const AnswerPtr& message,
-			muduo::Timestamp t)
-		{
-			LOG_DEBUG << "onAnswer: \n" << message->GetTypeName()
-				<< message->DebugString();
-
-			message->PrintDebugString();
-
-		}
-
-		void onEmpty(const muduo::net::TcpConnectionPtr& conn,
-			const EmptyPtr& message,
-			muduo::Timestamp t)
-		{
-
-			LOG_DEBUG << "onEmpty: \n" << message->GetTypeName()
-				<< message->DebugString();
-
-			message->PrintDebugString();
-		}
+		void onUploadEndRequest(const muduo::net::TcpConnectionPtr& conn,
+								const UploadEndRequestPtr& message,
+							    muduo::Timestamp t);
 
 		void onUnknowMessage(const TcpConnectionPtr& conn,
-			const MessagePtr& message,
-			muduo::Timestamp)
+							 const MessagePtr& message,
+							 muduo::Timestamp)
 		{
 			LOG_DEBUG << "onUnknowMessage: \n" << message->GetTypeName();
 		}
 
-		void onConnection(const TcpConnectionPtr& conn)
-		{
-			LOG_INFO << conn->localAddress().toIpPort() << " -> "
-				<< conn->peerAddress().toIpPort() << " is "
-				<< (conn->connected() ? "UP" : "DOWN");
-
-			if (conn->connected())
-			{
-				/*		if (messageToSend)
-							codec_.send(conn, *messageToSend);*/
-			}
-			else
-			{
-				//loop_->quit();
-			}
-		}
+		void onConnection(const TcpConnectionPtr& conn);
 
 
 
@@ -211,7 +143,8 @@ namespace edwards
 		TcpServer			server_;
 		ProtobufDispatcher	dispatcher_;
 		ProtobufCodec		codec_;
-
+		TaskThreadPool		pool_;
+		std::map<int, TcpConnectionPtr> clientConns_;//多个客户
 	};
 }
 

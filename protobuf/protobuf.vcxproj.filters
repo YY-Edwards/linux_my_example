@@ -30,6 +30,9 @@
     <ClInclude Include="src\file_server\FileServer.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\taskthreadpool\TaskThreadPool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\codec\Codec.cpp">
@@ -54,6 +57,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\test\file_upload_test\client\file_client.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\taskthreadpool\TaskThreadPool.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

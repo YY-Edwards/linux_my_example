@@ -18,8 +18,11 @@ using namespace edwards;
 
 FileServer::FileServer(EventLoop *loop,
 					   const InetAddress& listenAddr,
+					   int maxConnections,
 					   const std::string& name)
 					   : loop_(loop)
+					   , kMaxConnections_(maxConnections)
+					   , numConnected_(0)
 					   , server_(loop, listenAddr, name)
 					   , dispatcher_(std::bind(&FileServer::onUnknowMessage, this, _1, _2, _3))//注册一个无法识别的默认的回调
 					   //还可以注册一个解析出错的用户回调
@@ -61,14 +64,116 @@ void FileServer::onConnection(const TcpConnectionPtr& conn)
 		<< conn->peerAddress().toIpPort() << " is "
 		<< (conn->connected() ? "UP" : "DOWN");
 
+	edwards::ClientFile* clientFilePtr = NULL;
+
 	if (conn->connected())
 	{
-		conn->setContext(edwards::ClientFile());
+		++numConnected_;
+		if (numConnected_ > kMaxConnections_)
+		{
+			conn->shutdown();
+			conn->forceCloseWithDelay(3.0);  // > round trip of the whole Internet.
+		}
+		else
+		{
+			//构造一个客户文件对象，并与TcpConnectionPtr绑定
+			conn->setContext(edwards::ClientFile());
+			//取出每一个客户端绑定的文件对象
+			clientFilePtr = boost::any_cast<edwards::ClientFile>(conn->getMutableContext());
+			assert(clientFilePtr);
+			if (pool_.isPoolFree())
+			{
+				LOG_TRACE << "addTask.";
+				pool_.addTask(std::bind(&ClientFile::writeFileFunc, clientFilePtr));
+			}
+		}
+
 	}
 	else//断开连接
 	{
-		
+		--numConnected_;
+		//取出每一个客户端绑定的文件对象
+		 clientFilePtr = boost::any_cast<edwards::ClientFile>(conn->getMutableContext());
+		 if (clientFilePtr)
+		 {
+			 clientFilePtr->exitDownloadAndClose();
+		 }
+
 	}
+	LOG_INFO << "numConnected = " << numConnected_;
+	LOG_DEBUG << "clientFilePtr: " << clientFilePtr;
+}
+
+void FileServer::onUploadStartRequest(const muduo::net::TcpConnectionPtr& conn,
+									  const UploadStartRequestPtr& message,
+									  muduo::Timestamp t)
+{
+	LOG_DEBUG << "onUploadStartRequest: " << message->GetTypeName()
+				<< "\n"
+				<< message->DebugString();
+
+	//取出每一个客户端绑定的文件对象
+	edwards::ClientFile* clientFilePtr =
+		boost::any_cast<edwards::ClientFile>(conn->getMutableContext());
+	assert(clientFilePtr);
+	bool ret;
+	std::string result = "success";
+	std::string reason = "";
+
+
+	ret = clientFilePtr->create(message->file_id(), message->file_name(), message->file_size());
+	if (ret != true)
+	{
+		result = "failure";
+		reason = "file info err.";		
+	}
+
+	sendStartResponse(message->package_numb(), message->file_id(), result, reason);
+}
+
+void FileServer::onFileFrameTransferRequest(const muduo::net::TcpConnectionPtr& conn,
+											const FileFrameTransferRequestPtr& message,
+									        muduo::Timestamp t)
+{
+	LOG_DEBUG << "onFileFrameTransferRequest: " << message->GetTypeName()
+		<< "\n"
+		<< message->DebugString();
+
+	//取出每一个客户端绑定的文件对象
+	edwards::ClientFile* clientFilePtr =
+		boost::any_cast<edwards::ClientFile>(conn->getMutableContext());
+	assert(clientFilePtr);
+	bool ret;
+	std::string result = "success";
+	std::string reason = "";
+
+
+	clientFilePtr->appendContent(message->file_id(), message->frame_datas().c_str(), message->frame_size());
+
+	sendFrameResponse(message->package_numb(), message->file_id(), message->frame_size(), result, reason);
+}
+
+
+
+void FileServer::onUploadEndRequest(const muduo::net::TcpConnectionPtr& conn,
+									const UploadEndRequestPtr& message,
+									muduo::Timestamp t)
+{
+	LOG_DEBUG << "onUploadEndRequest: " << message->GetTypeName()
+		<< "\n"
+		<< message->DebugString();
+
+	//取出每一个客户端绑定的文件对象
+	edwards::ClientFile* clientFilePtr =
+		boost::any_cast<edwards::ClientFile>(conn->getMutableContext());
+	assert(clientFilePtr);
+	bool ret;
+	std::string result = "success";
+	std::string reason = "";
+
+	clientFilePtr->close(message->file_id());
+
+	sendFrameResponse(message->package_numb(), message->file_id(), message->frame_size(), result, reason);
 }
 
 

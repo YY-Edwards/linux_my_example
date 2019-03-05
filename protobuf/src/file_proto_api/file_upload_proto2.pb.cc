@@ -25,11 +25,11 @@ class UploadStartRequestDefaultTypeInternal {
   ::google::protobuf::internal::ExplicitlyConstructed<UploadStartRequest>
       _instance;
 } _UploadStartRequest_default_instance_;
-class UploadStartReponseDefaultTypeInternal {
+class UploadStartResponseDefaultTypeInternal {
  public:
-  ::google::protobuf::internal::ExplicitlyConstructed<UploadStartReponse>
+  ::google::protobuf::internal::ExplicitlyConstructed<UploadStartResponse>
       _instance;
-} _UploadStartReponse_default_instance_;
+} _UploadStartResponse_default_instance_;
 class FileFrameTransferRequestDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<FileFrameTransferRequest>
@@ -66,19 +66,19 @@ static void InitDefaultsUploadStartRequest() {
 ::google::protobuf::internal::SCCInfo<0> scc_info_UploadStartRequest =
     {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsUploadStartRequest}, {}};
 
-static void InitDefaultsUploadStartReponse() {
+static void InitDefaultsUploadStartResponse() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::edwards::_UploadStartReponse_default_instance_;
-    new (ptr) ::edwards::UploadStartReponse();
+    void* ptr = &::edwards::_UploadStartResponse_default_instance_;
+    new (ptr) ::edwards::UploadStartResponse();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::edwards::UploadStartReponse::InitAsDefaultInstance();
+  ::edwards::UploadStartResponse::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<0> scc_info_UploadStartReponse =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsUploadStartReponse}, {}};
+::google::protobuf::internal::SCCInfo<0> scc_info_UploadStartResponse =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsUploadStartResponse}, {}};
 
 static void InitDefaultsFileFrameTransferRequest() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -138,7 +138,7 @@ static void InitDefaultsUploadEndResponse() {
 
 void InitDefaults() {
   ::google::protobuf::internal::InitSCC(&scc_info_UploadStartRequest.base);
-  ::google::protobuf::internal::InitSCC(&scc_info_UploadStartReponse.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_UploadStartResponse.base);
   ::google::protobuf::internal::InitSCC(&scc_info_FileFrameTransferRequest.base);
   ::google::protobuf::internal::InitSCC(&scc_info_FileFrameTransferResponse.base);
   ::google::protobuf::internal::InitSCC(&scc_info_UploadEndRequest.base);
@@ -165,15 +165,15 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   5,
   1,
   2,
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::edwards::UploadStartReponse, _has_bits_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::edwards::UploadStartReponse, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::edwards::UploadStartResponse, _has_bits_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::edwards::UploadStartResponse, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::edwards::UploadStartReponse, package_numb_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::edwards::UploadStartReponse, file_id_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::edwards::UploadStartReponse, result_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::edwards::UploadStartReponse, reason_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::edwards::UploadStartResponse, package_numb_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::edwards::UploadStartResponse, file_id_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::edwards::UploadStartResponse, result_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::edwards::UploadStartResponse, reason_),
   2,
   3,
   0,
@@ -235,7 +235,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
 };
 static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   { 0, 11, sizeof(::edwards::UploadStartRequest)},
-  { 17, 26, sizeof(::edwards::UploadStartReponse)},
+  { 17, 26, sizeof(::edwards::UploadStartResponse)},
   { 30, 39, sizeof(::edwards::FileFrameTransferRequest)},
   { 43, 53, sizeof(::edwards::FileFrameTransferResponse)},
   { 58, 66, sizeof(::edwards::UploadEndRequest)},
@@ -244,7 +244,7 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROT
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&::edwards::_UploadStartRequest_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&::edwards::_UploadStartReponse_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::edwards::_UploadStartResponse_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::edwards::_FileFrameTransferRequest_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::edwards::_FileFrameTransferResponse_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::edwards::_UploadEndRequest_default_instance_),
@@ -276,24 +276,24 @@ void AddDescriptorsImpl() {
       "UploadStartRequest\022\024\n\014package_numb\030\001 \002(\003"
       "\022\017\n\007file_id\030\002 \002(\003\022\021\n\tfile_name\030\003 \002(\t\022\021\n\t"
       "file_size\030\004 \002(\006\022\023\n\013file_fromat\030\005 \002(\t\022\031\n\021"
-      "file_storage_path\030\006 \001(\t\"[\n\022UploadStartRe"
-      "ponse\022\024\n\014package_numb\030\001 \002(\003\022\017\n\007file_id\030\002"
-      " \002(\003\022\016\n\006result\030\003 \002(\t\022\016\n\006reason\030\004 \001(\t\"j\n\030"
-      "FileFrameTransferRequest\022\024\n\014package_numb"
-      "\030\001 \002(\003\022\017\n\007file_id\030\002 \002(\003\022\022\n\nframe_size\030\003 "
-      "\002(\003\022\023\n\013frame_datas\030\004 \002(\014\"v\n\031FileFrameTra"
-      "nsferResponse\022\024\n\014package_numb\030\001 \002(\003\022\017\n\007f"
-      "ile_id\030\002 \002(\003\022\022\n\nframe_size\030\003 \002(\003\022\016\n\006resu"
-      "lt\030\004 \002(\t\022\016\n\006reason\030\005 \001(\t\"L\n\020UploadEndReq"
-      "uest\022\024\n\014package_numb\030\001 \002(\003\022\017\n\007file_id\030\002 "
-      "\002(\003\022\021\n\tfile_name\030\003 \002(\t\"m\n\021UploadEndRespo"
-      "nse\022\024\n\014package_numb\030\001 \002(\003\022\017\n\007file_id\030\002 \002"
-      "(\003\022\021\n\tfile_name\030\003 \002(\t\022\016\n\006result\030\004 \002(\t\022\016\n"
-      "\006reason\030\005 \001(\tB-\n\031edwards.file_upload.tes"
-      "tsB\020FileUploadProtos"
+      "file_storage_path\030\006 \001(\t\"\\\n\023UploadStartRe"
+      "sponse\022\024\n\014package_numb\030\001 \002(\003\022\017\n\007file_id\030"
+      "\002 \002(\003\022\016\n\006result\030\003 \002(\t\022\016\n\006reason\030\004 \001(\t\"j\n"
+      "\030FileFrameTransferRequest\022\024\n\014package_num"
+      "b\030\001 \002(\003\022\017\n\007file_id\030\002 \002(\003\022\022\n\nframe_size\030\003"
+      " \002(\003\022\023\n\013frame_datas\030\004 \002(\014\"v\n\031FileFrameTr"
+      "ansferResponse\022\024\n\014package_numb\030\001 \002(\003\022\017\n\007"
+      "file_id\030\002 \002(\003\022\022\n\nframe_size\030\003 \002(\003\022\016\n\006res"
+      "ult\030\004 \002(\t\022\016\n\006reason\030\005 \001(\t\"L\n\020UploadEndRe"
+      "quest\022\024\n\014package_numb\030\001 \002(\003\022\017\n\007file_id\030\002"
+      " \002(\003\022\021\n\tfile_name\030\003 \002(\t\"m\n\021UploadEndResp"
+      "onse\022\024\n\014package_numb\030\001 \002(\003\022\017\n\007file_id\030\002 "
+      "\002(\003\022\021\n\tfile_name\030\003 \002(\t\022\016\n\006result\030\004 \002(\t\022\016"
+      "\n\006reason\030\005 \001(\tB-\n\031edwards.file_upload.te"
+      "stsB\020FileUploadProtos"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 740);
+      descriptor, 741);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "file_upload_proto2.proto", &protobuf_RegisterTypes);
 }
@@ -840,23 +840,23 @@ void UploadStartRequest::InternalSwap(UploadStartRequest* other) {
 
 // ===================================================================
 
-void UploadStartReponse::InitAsDefaultInstance() {
+void UploadStartResponse::InitAsDefaultInstance() {
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int UploadStartReponse::kPackageNumbFieldNumber;
-const int UploadStartReponse::kFileIdFieldNumber;
-const int UploadStartReponse::kResultFieldNumber;
-const int UploadStartReponse::kReasonFieldNumber;
+const int UploadStartResponse::kPackageNumbFieldNumber;
+const int UploadStartResponse::kFileIdFieldNumber;
+const int UploadStartResponse::kResultFieldNumber;
+const int UploadStartResponse::kReasonFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
-UploadStartReponse::UploadStartReponse()
+UploadStartResponse::UploadStartResponse()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   ::google::protobuf::internal::InitSCC(
-      &protobuf_file_5fupload_5fproto2_2eproto::scc_info_UploadStartReponse.base);
+      &protobuf_file_5fupload_5fproto2_2eproto::scc_info_UploadStartResponse.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:edwards.UploadStartReponse)
+  // @@protoc_insertion_point(constructor:edwards.UploadStartResponse)
 }
-UploadStartReponse::UploadStartReponse(const UploadStartReponse& from)
+UploadStartResponse::UploadStartResponse(const UploadStartResponse& from)
   : ::google::protobuf::Message(),
       _internal_metadata_(NULL),
       _has_bits_(from._has_bits_) {
@@ -872,10 +872,10 @@ UploadStartReponse::UploadStartReponse(const UploadStartReponse& from)
   ::memcpy(&package_numb_, &from.package_numb_,
     static_cast<size_t>(reinterpret_cast<char*>(&file_id_) -
     reinterpret_cast<char*>(&package_numb_)) + sizeof(file_id_));
-  // @@protoc_insertion_point(copy_constructor:edwards.UploadStartReponse)
+  // @@protoc_insertion_point(copy_constructor:edwards.UploadStartResponse)
 }
 
-void UploadStartReponse::SharedCtor() {
+void UploadStartResponse::SharedCtor() {
   result_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   reason_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&package_numb_, 0, static_cast<size_t>(
@@ -883,32 +883,32 @@ void UploadStartReponse::SharedCtor() {
       reinterpret_cast<char*>(&package_numb_)) + sizeof(file_id_));
 }
 
-UploadStartReponse::~UploadStartReponse() {
-  // @@protoc_insertion_point(destructor:edwards.UploadStartReponse)
+UploadStartResponse::~UploadStartResponse() {
+  // @@protoc_insertion_point(destructor:edwards.UploadStartResponse)
   SharedDtor();
 }
 
-void UploadStartReponse::SharedDtor() {
+void UploadStartResponse::SharedDtor() {
   result_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   reason_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
-void UploadStartReponse::SetCachedSize(int size) const {
+void UploadStartResponse::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
-const ::google::protobuf::Descriptor* UploadStartReponse::descriptor() {
+const ::google::protobuf::Descriptor* UploadStartResponse::descriptor() {
   ::protobuf_file_5fupload_5fproto2_2eproto::protobuf_AssignDescriptorsOnce();
   return ::protobuf_file_5fupload_5fproto2_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
 }
 
-const UploadStartReponse& UploadStartReponse::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_file_5fupload_5fproto2_2eproto::scc_info_UploadStartReponse.base);
+const UploadStartResponse& UploadStartResponse::default_instance() {
+  ::google::protobuf::internal::InitSCC(&protobuf_file_5fupload_5fproto2_2eproto::scc_info_UploadStartResponse.base);
   return *internal_default_instance();
 }
 
 
-void UploadStartReponse::Clear() {
-// @@protoc_insertion_point(message_clear_start:edwards.UploadStartReponse)
+void UploadStartResponse::Clear() {
+// @@protoc_insertion_point(message_clear_start:edwards.UploadStartResponse)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -931,11 +931,11 @@ void UploadStartReponse::Clear() {
   _internal_metadata_.Clear();
 }
 
-bool UploadStartReponse::MergePartialFromCodedStream(
+bool UploadStartResponse::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:edwards.UploadStartReponse)
+  // @@protoc_insertion_point(parse_start:edwards.UploadStartResponse)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -978,7 +978,7 @@ bool UploadStartReponse::MergePartialFromCodedStream(
           ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
             this->result().data(), static_cast<int>(this->result().length()),
             ::google::protobuf::internal::WireFormat::PARSE,
-            "edwards.UploadStartReponse.result");
+            "edwards.UploadStartResponse.result");
         } else {
           goto handle_unusual;
         }
@@ -994,7 +994,7 @@ bool UploadStartReponse::MergePartialFromCodedStream(
           ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
             this->reason().data(), static_cast<int>(this->reason().length()),
             ::google::protobuf::internal::WireFormat::PARSE,
-            "edwards.UploadStartReponse.reason");
+            "edwards.UploadStartResponse.reason");
         } else {
           goto handle_unusual;
         }
@@ -1013,17 +1013,17 @@ bool UploadStartReponse::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:edwards.UploadStartReponse)
+  // @@protoc_insertion_point(parse_success:edwards.UploadStartResponse)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:edwards.UploadStartReponse)
+  // @@protoc_insertion_point(parse_failure:edwards.UploadStartResponse)
   return false;
 #undef DO_
 }
 
-void UploadStartReponse::SerializeWithCachedSizes(
+void UploadStartResponse::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:edwards.UploadStartReponse)
+  // @@protoc_insertion_point(serialize_start:edwards.UploadStartResponse)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -1043,7 +1043,7 @@ void UploadStartReponse::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->result().data(), static_cast<int>(this->result().length()),
       ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "edwards.UploadStartReponse.result");
+      "edwards.UploadStartResponse.result");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       3, this->result(), output);
   }
@@ -1053,7 +1053,7 @@ void UploadStartReponse::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->reason().data(), static_cast<int>(this->reason().length()),
       ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "edwards.UploadStartReponse.reason");
+      "edwards.UploadStartResponse.reason");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       4, this->reason(), output);
   }
@@ -1062,13 +1062,13 @@ void UploadStartReponse::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         _internal_metadata_.unknown_fields(), output);
   }
-  // @@protoc_insertion_point(serialize_end:edwards.UploadStartReponse)
+  // @@protoc_insertion_point(serialize_end:edwards.UploadStartResponse)
 }
 
-::google::protobuf::uint8* UploadStartReponse::InternalSerializeWithCachedSizesToArray(
+::google::protobuf::uint8* UploadStartResponse::InternalSerializeWithCachedSizesToArray(
     bool deterministic, ::google::protobuf::uint8* target) const {
   (void)deterministic; // Unused
-  // @@protoc_insertion_point(serialize_to_array_start:edwards.UploadStartReponse)
+  // @@protoc_insertion_point(serialize_to_array_start:edwards.UploadStartResponse)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -1088,7 +1088,7 @@ void UploadStartReponse::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->result().data(), static_cast<int>(this->result().length()),
       ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "edwards.UploadStartReponse.result");
+      "edwards.UploadStartResponse.result");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         3, this->result(), target);
@@ -1099,7 +1099,7 @@ void UploadStartReponse::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->reason().data(), static_cast<int>(this->reason().length()),
       ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "edwards.UploadStartReponse.reason");
+      "edwards.UploadStartResponse.reason");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         4, this->reason(), target);
@@ -1109,12 +1109,12 @@ void UploadStartReponse::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields(), target);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:edwards.UploadStartReponse)
+  // @@protoc_insertion_point(serialize_to_array_end:edwards.UploadStartResponse)
   return target;
 }
 
-size_t UploadStartReponse::RequiredFieldsByteSizeFallback() const {
-// @@protoc_insertion_point(required_fields_byte_size_fallback_start:edwards.UploadStartReponse)
+size_t UploadStartResponse::RequiredFieldsByteSizeFallback() const {
+// @@protoc_insertion_point(required_fields_byte_size_fallback_start:edwards.UploadStartResponse)
   size_t total_size = 0;
 
   if (has_result()) {
@@ -1140,8 +1140,8 @@ size_t UploadStartReponse::RequiredFieldsByteSizeFallback() const {
 
   return total_size;
 }
-size_t UploadStartReponse::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:edwards.UploadStartReponse)
+size_t UploadStartResponse::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:edwards.UploadStartResponse)
   size_t total_size = 0;
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -1180,23 +1180,23 @@ size_t UploadStartReponse::ByteSizeLong() const {
   return total_size;
 }
 
-void UploadStartReponse::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:edwards.UploadStartReponse)
+void UploadStartResponse::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:edwards.UploadStartResponse)
   GOOGLE_DCHECK_NE(&from, this);
-  const UploadStartReponse* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const UploadStartReponse>(
+  const UploadStartResponse* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const UploadStartResponse>(
           &from);
   if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:edwards.UploadStartReponse)
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:edwards.UploadStartResponse)
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
   } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:edwards.UploadStartReponse)
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:edwards.UploadStartResponse)
     MergeFrom(*source);
   }
 }
 
-void UploadStartReponse::MergeFrom(const UploadStartReponse& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:edwards.UploadStartReponse)
+void UploadStartResponse::MergeFrom(const UploadStartResponse& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:edwards.UploadStartResponse)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -1222,30 +1222,30 @@ void UploadStartReponse::MergeFrom(const UploadStartReponse& from) {
   }
 }
 
-void UploadStartReponse::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:edwards.UploadStartReponse)
+void UploadStartResponse::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:edwards.UploadStartResponse)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void UploadStartReponse::CopyFrom(const UploadStartReponse& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:edwards.UploadStartReponse)
+void UploadStartResponse::CopyFrom(const UploadStartResponse& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:edwards.UploadStartResponse)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool UploadStartReponse::IsInitialized() const {
+bool UploadStartResponse::IsInitialized() const {
   if ((_has_bits_[0] & 0x0000000d) != 0x0000000d) return false;
   return true;
 }
 
-void UploadStartReponse::Swap(UploadStartReponse* other) {
+void UploadStartResponse::Swap(UploadStartResponse* other) {
   if (other == this) return;
   InternalSwap(other);
 }
-void UploadStartReponse::InternalSwap(UploadStartReponse* other) {
+void UploadStartResponse::InternalSwap(UploadStartResponse* other) {
   using std::swap;
   result_.Swap(&other->result_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
@@ -1257,7 +1257,7 @@ void UploadStartReponse::InternalSwap(UploadStartReponse* other) {
   _internal_metadata_.Swap(&other->_internal_metadata_);
 }
 
-::google::protobuf::Metadata UploadStartReponse::GetMetadata() const {
+::google::protobuf::Metadata UploadStartResponse::GetMetadata() const {
   protobuf_file_5fupload_5fproto2_2eproto::protobuf_AssignDescriptorsOnce();
   return ::protobuf_file_5fupload_5fproto2_2eproto::file_level_metadata[kIndexInFileMessages];
 }
@@ -2981,8 +2981,8 @@ namespace protobuf {
 template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::edwards::UploadStartRequest* Arena::CreateMaybeMessage< ::edwards::UploadStartRequest >(Arena* arena) {
   return Arena::CreateInternal< ::edwards::UploadStartRequest >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::edwards::UploadStartReponse* Arena::CreateMaybeMessage< ::edwards::UploadStartReponse >(Arena* arena) {
-  return Arena::CreateInternal< ::edwards::UploadStartReponse >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::edwards::UploadStartResponse* Arena::CreateMaybeMessage< ::edwards::UploadStartResponse >(Arena* arena) {
+  return Arena::CreateInternal< ::edwards::UploadStartResponse >(arena);
 }
 template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::edwards::FileFrameTransferRequest* Arena::CreateMaybeMessage< ::edwards::FileFrameTransferRequest >(Arena* arena) {
   return Arena::CreateInternal< ::edwards::FileFrameTransferRequest >(arena);

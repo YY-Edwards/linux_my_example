@@ -136,7 +136,7 @@ void TaskThreadPool::runInThread()
 			Task task(take());//取出任务并构造，如果为空，则等待
 			if (task)//任务不为空
 			{
-				LOG_DEBUG <<"tid= "<< muduo::CurrentThread::tid();
+				LOG_DEBUG <<"take task, tid= "<< muduo::CurrentThread::tid();
 				task();
 			}
 			else

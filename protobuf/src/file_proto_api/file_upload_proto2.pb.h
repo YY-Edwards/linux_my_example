@@ -58,12 +58,12 @@ extern UploadEndRequestDefaultTypeInternal _UploadEndRequest_default_instance_;
 class UploadEndResponse;
 class UploadEndResponseDefaultTypeInternal;
 extern UploadEndResponseDefaultTypeInternal _UploadEndResponse_default_instance_;
-class UploadStartReponse;
-class UploadStartReponseDefaultTypeInternal;
-extern UploadStartReponseDefaultTypeInternal _UploadStartReponse_default_instance_;
 class UploadStartRequest;
 class UploadStartRequestDefaultTypeInternal;
 extern UploadStartRequestDefaultTypeInternal _UploadStartRequest_default_instance_;
+class UploadStartResponse;
+class UploadStartResponseDefaultTypeInternal;
+extern UploadStartResponseDefaultTypeInternal _UploadStartResponse_default_instance_;
 }  // namespace edwards
 namespace google {
 namespace protobuf {
@@ -71,8 +71,8 @@ template<> ::edwards::FileFrameTransferRequest* Arena::CreateMaybeMessage<::edwa
 template<> ::edwards::FileFrameTransferResponse* Arena::CreateMaybeMessage<::edwards::FileFrameTransferResponse>(Arena*);
 template<> ::edwards::UploadEndRequest* Arena::CreateMaybeMessage<::edwards::UploadEndRequest>(Arena*);
 template<> ::edwards::UploadEndResponse* Arena::CreateMaybeMessage<::edwards::UploadEndResponse>(Arena*);
-template<> ::edwards::UploadStartReponse* Arena::CreateMaybeMessage<::edwards::UploadStartReponse>(Arena*);
 template<> ::edwards::UploadStartRequest* Arena::CreateMaybeMessage<::edwards::UploadStartRequest>(Arena*);
+template<> ::edwards::UploadStartResponse* Arena::CreateMaybeMessage<::edwards::UploadStartResponse>(Arena*);
 }  // namespace protobuf
 }  // namespace google
 namespace edwards {
@@ -270,24 +270,24 @@ class UploadStartRequest : public ::google::protobuf::Message /* @@protoc_insert
 };
 // -------------------------------------------------------------------
 
-class UploadStartReponse : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:edwards.UploadStartReponse) */ {
+class UploadStartResponse : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:edwards.UploadStartResponse) */ {
  public:
-  UploadStartReponse();
-  virtual ~UploadStartReponse();
+  UploadStartResponse();
+  virtual ~UploadStartResponse();
 
-  UploadStartReponse(const UploadStartReponse& from);
+  UploadStartResponse(const UploadStartResponse& from);
 
-  inline UploadStartReponse& operator=(const UploadStartReponse& from) {
+  inline UploadStartResponse& operator=(const UploadStartResponse& from) {
     CopyFrom(from);
     return *this;
   }
   #if LANG_CXX11
-  UploadStartReponse(UploadStartReponse&& from) noexcept
-    : UploadStartReponse() {
+  UploadStartResponse(UploadStartResponse&& from) noexcept
+    : UploadStartResponse() {
     *this = ::std::move(from);
   }
 
-  inline UploadStartReponse& operator=(UploadStartReponse&& from) noexcept {
+  inline UploadStartResponse& operator=(UploadStartResponse&& from) noexcept {
     if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
       if (this != &from) InternalSwap(&from);
     } else {
@@ -304,34 +304,34 @@ class UploadStartReponse : public ::google::protobuf::Message /* @@protoc_insert
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const UploadStartReponse& default_instance();
+  static const UploadStartResponse& default_instance();
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const UploadStartReponse* internal_default_instance() {
-    return reinterpret_cast<const UploadStartReponse*>(
-               &_UploadStartReponse_default_instance_);
+  static inline const UploadStartResponse* internal_default_instance() {
+    return reinterpret_cast<const UploadStartResponse*>(
+               &_UploadStartResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     1;
 
-  void Swap(UploadStartReponse* other);
-  friend void swap(UploadStartReponse& a, UploadStartReponse& b) {
+  void Swap(UploadStartResponse* other);
+  friend void swap(UploadStartResponse& a, UploadStartResponse& b) {
     a.Swap(&b);
   }
 
   // implements Message ----------------------------------------------
 
-  inline UploadStartReponse* New() const final {
-    return CreateMaybeMessage<UploadStartReponse>(NULL);
+  inline UploadStartResponse* New() const final {
+    return CreateMaybeMessage<UploadStartResponse>(NULL);
   }
 
-  UploadStartReponse* New(::google::protobuf::Arena* arena) const final {
-    return CreateMaybeMessage<UploadStartReponse>(arena);
+  UploadStartResponse* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<UploadStartResponse>(arena);
   }
   void CopyFrom(const ::google::protobuf::Message& from) final;
   void MergeFrom(const ::google::protobuf::Message& from) final;
-  void CopyFrom(const UploadStartReponse& from);
-  void MergeFrom(const UploadStartReponse& from);
+  void CopyFrom(const UploadStartResponse& from);
+  void MergeFrom(const UploadStartResponse& from);
   void Clear() final;
   bool IsInitialized() const final;
 
@@ -348,7 +348,7 @@ class UploadStartReponse : public ::google::protobuf::Message /* @@protoc_insert
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(UploadStartReponse* other);
+  void InternalSwap(UploadStartResponse* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return NULL;
@@ -408,7 +408,7 @@ class UploadStartReponse : public ::google::protobuf::Message /* @@protoc_insert
   ::google::protobuf::int64 file_id() const;
   void set_file_id(::google::protobuf::int64 value);
 
-  // @@protoc_insertion_point(class_scope:edwards.UploadStartReponse)
+  // @@protoc_insertion_point(class_scope:edwards.UploadStartResponse)
  private:
   void set_has_package_numb();
   void clear_has_package_numb();
@@ -1368,186 +1368,186 @@ inline void UploadStartRequest::set_allocated_file_storage_path(::std::string* f
 
 // -------------------------------------------------------------------
 
-// UploadStartReponse
+// UploadStartResponse
 
 // required int64 package_numb = 1;
-inline bool UploadStartReponse::has_package_numb() const {
+inline bool UploadStartResponse::has_package_numb() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void UploadStartReponse::set_has_package_numb() {
+inline void UploadStartResponse::set_has_package_numb() {
   _has_bits_[0] |= 0x00000004u;
 }
-inline void UploadStartReponse::clear_has_package_numb() {
+inline void UploadStartResponse::clear_has_package_numb() {
   _has_bits_[0] &= ~0x00000004u;
 }
-inline void UploadStartReponse::clear_package_numb() {
+inline void UploadStartResponse::clear_package_numb() {
   package_numb_ = GOOGLE_LONGLONG(0);
   clear_has_package_numb();
 }
-inline ::google::protobuf::int64 UploadStartReponse::package_numb() const {
-  // @@protoc_insertion_point(field_get:edwards.UploadStartReponse.package_numb)
+inline ::google::protobuf::int64 UploadStartResponse::package_numb() const {
+  // @@protoc_insertion_point(field_get:edwards.UploadStartResponse.package_numb)
   return package_numb_;
 }
-inline void UploadStartReponse::set_package_numb(::google::protobuf::int64 value) {
+inline void UploadStartResponse::set_package_numb(::google::protobuf::int64 value) {
   set_has_package_numb();
   package_numb_ = value;
-  // @@protoc_insertion_point(field_set:edwards.UploadStartReponse.package_numb)
+  // @@protoc_insertion_point(field_set:edwards.UploadStartResponse.package_numb)
 }
 
 // required int64 file_id = 2;
-inline bool UploadStartReponse::has_file_id() const {
+inline bool UploadStartResponse::has_file_id() const {
   return (_has_bits_[0] & 0x00000008u) != 0;
 }
-inline void UploadStartReponse::set_has_file_id() {
+inline void UploadStartResponse::set_has_file_id() {
   _has_bits_[0] |= 0x00000008u;
 }
-inline void UploadStartReponse::clear_has_file_id() {
+inline void UploadStartResponse::clear_has_file_id() {
   _has_bits_[0] &= ~0x00000008u;
 }
-inline void UploadStartReponse::clear_file_id() {
+inline void UploadStartResponse::clear_file_id() {
   file_id_ = GOOGLE_LONGLONG(0);
   clear_has_file_id();
 }
-inline ::google::protobuf::int64 UploadStartReponse::file_id() const {
-  // @@protoc_insertion_point(field_get:edwards.UploadStartReponse.file_id)
+inline ::google::protobuf::int64 UploadStartResponse::file_id() const {
+  // @@protoc_insertion_point(field_get:edwards.UploadStartResponse.file_id)
   return file_id_;
 }
-inline void UploadStartReponse::set_file_id(::google::protobuf::int64 value) {
+inline void UploadStartResponse::set_file_id(::google::protobuf::int64 value) {
   set_has_file_id();
   file_id_ = value;
-  // @@protoc_insertion_point(field_set:edwards.UploadStartReponse.file_id)
+  // @@protoc_insertion_point(field_set:edwards.UploadStartResponse.file_id)
 }
 
 // required string result = 3;
-inline bool UploadStartReponse::has_result() const {
+inline bool UploadStartResponse::has_result() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void UploadStartReponse::set_has_result() {
+inline void UploadStartResponse::set_has_result() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void UploadStartReponse::clear_has_result() {
+inline void UploadStartResponse::clear_has_result() {
   _has_bits_[0] &= ~0x00000001u;
 }
-inline void UploadStartReponse::clear_result() {
+inline void UploadStartResponse::clear_result() {
   result_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   clear_has_result();
 }
-inline const ::std::string& UploadStartReponse::result() const {
-  // @@protoc_insertion_point(field_get:edwards.UploadStartReponse.result)
+inline const ::std::string& UploadStartResponse::result() const {
+  // @@protoc_insertion_point(field_get:edwards.UploadStartResponse.result)
   return result_.GetNoArena();
 }
-inline void UploadStartReponse::set_result(const ::std::string& value) {
+inline void UploadStartResponse::set_result(const ::std::string& value) {
   set_has_result();
   result_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:edwards.UploadStartReponse.result)
+  // @@protoc_insertion_point(field_set:edwards.UploadStartResponse.result)
 }
 #if LANG_CXX11
-inline void UploadStartReponse::set_result(::std::string&& value) {
+inline void UploadStartResponse::set_result(::std::string&& value) {
   set_has_result();
   result_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:edwards.UploadStartReponse.result)
+  // @@protoc_insertion_point(field_set_rvalue:edwards.UploadStartResponse.result)
 }
 #endif
-inline void UploadStartReponse::set_result(const char* value) {
+inline void UploadStartResponse::set_result(const char* value) {
   GOOGLE_DCHECK(value != NULL);
   set_has_result();
   result_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:edwards.UploadStartReponse.result)
+  // @@protoc_insertion_point(field_set_char:edwards.UploadStartResponse.result)
 }
-inline void UploadStartReponse::set_result(const char* value, size_t size) {
+inline void UploadStartResponse::set_result(const char* value, size_t size) {
   set_has_result();
   result_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:edwards.UploadStartReponse.result)
+  // @@protoc_insertion_point(field_set_pointer:edwards.UploadStartResponse.result)
 }
-inline ::std::string* UploadStartReponse::mutable_result() {
+inline ::std::string* UploadStartResponse::mutable_result() {
   set_has_result();
-  // @@protoc_insertion_point(field_mutable:edwards.UploadStartReponse.result)
+  // @@protoc_insertion_point(field_mutable:edwards.UploadStartResponse.result)
   return result_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* UploadStartReponse::release_result() {
-  // @@protoc_insertion_point(field_release:edwards.UploadStartReponse.result)
+inline ::std::string* UploadStartResponse::release_result() {
+  // @@protoc_insertion_point(field_release:edwards.UploadStartResponse.result)
   if (!has_result()) {
     return NULL;
   }
   clear_has_result();
   return result_.ReleaseNonDefaultNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void UploadStartReponse::set_allocated_result(::std::string* result) {
+inline void UploadStartResponse::set_allocated_result(::std::string* result) {
   if (result != NULL) {
     set_has_result();
   } else {
     clear_has_result();
   }
   result_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), result);
-  // @@protoc_insertion_point(field_set_allocated:edwards.UploadStartReponse.result)
+  // @@protoc_insertion_point(field_set_allocated:edwards.UploadStartResponse.result)
 }
 
 // optional string reason = 4;
-inline bool UploadStartReponse::has_reason() const {
+inline bool UploadStartResponse::has_reason() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void UploadStartReponse::set_has_reason() {
+inline void UploadStartResponse::set_has_reason() {
   _has_bits_[0] |= 0x00000002u;
 }
-inline void UploadStartReponse::clear_has_reason() {
+inline void UploadStartResponse::clear_has_reason() {
   _has_bits_[0] &= ~0x00000002u;
 }
-inline void UploadStartReponse::clear_reason() {
+inline void UploadStartResponse::clear_reason() {
   reason_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   clear_has_reason();
 }
-inline const ::std::string& UploadStartReponse::reason() const {
-  // @@protoc_insertion_point(field_get:edwards.UploadStartReponse.reason)
+inline const ::std::string& UploadStartResponse::reason() const {
+  // @@protoc_insertion_point(field_get:edwards.UploadStartResponse.reason)
   return reason_.GetNoArena();
 }
-inline void UploadStartReponse::set_reason(const ::std::string& value) {
+inline void UploadStartResponse::set_reason(const ::std::string& value) {
   set_has_reason();
   reason_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:edwards.UploadStartReponse.reason)
+  // @@protoc_insertion_point(field_set:edwards.UploadStartResponse.reason)
 }
 #if LANG_CXX11
-inline void UploadStartReponse::set_reason(::std::string&& value) {
+inline void UploadStartResponse::set_reason(::std::string&& value) {
   set_has_reason();
   reason_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:edwards.UploadStartReponse.reason)
+  // @@protoc_insertion_point(field_set_rvalue:edwards.UploadStartResponse.reason)
 }
 #endif
-inline void UploadStartReponse::set_reason(const char* value) {
+inline void UploadStartResponse::set_reason(const char* value) {
   GOOGLE_DCHECK(value != NULL);
   set_has_reason();
   reason_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:edwards.UploadStartReponse.reason)
+  // @@protoc_insertion_point(field_set_char:edwards.UploadStartResponse.reason)
 }
-inline void UploadStartReponse::set_reason(const char* value, size_t size) {
+inline void UploadStartResponse::set_reason(const char* value, size_t size) {
   set_has_reason();
   reason_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:edwards.UploadStartReponse.reason)
+  // @@protoc_insertion_point(field_set_pointer:edwards.UploadStartResponse.reason)
 }
-inline ::std::string* UploadStartReponse::mutable_reason() {
+inline ::std::string* UploadStartResponse::mutable_reason() {
   set_has_reason();
-  // @@protoc_insertion_point(field_mutable:edwards.UploadStartReponse.reason)
+  // @@protoc_insertion_point(field_mutable:edwards.UploadStartResponse.reason)
   return reason_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* UploadStartReponse::release_reason() {
-  // @@protoc_insertion_point(field_release:edwards.UploadStartReponse.reason)
+inline ::std::string* UploadStartResponse::release_reason() {
+  // @@protoc_insertion_point(field_release:edwards.UploadStartResponse.reason)
   if (!has_reason()) {
     return NULL;
   }
   clear_has_reason();
   return reason_.ReleaseNonDefaultNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void UploadStartReponse::set_allocated_reason(::std::string* reason) {
+inline void UploadStartResponse::set_allocated_reason(::std::string* reason) {
   if (reason != NULL) {
     set_has_reason();
   } else {
     clear_has_reason();
   }
   reason_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), reason);
-  // @@protoc_insertion_point(field_set_allocated:edwards.UploadStartReponse.reason)
+  // @@protoc_insertion_point(field_set_allocated:edwards.UploadStartResponse.reason)
 }
 
 // -------------------------------------------------------------------

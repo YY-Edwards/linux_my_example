@@ -71,13 +71,15 @@ namespace edwards
 		ClientFile();
 		~ClientFile();
 
-		void create();
-		void appendContent();
-		void close();
+		bool create(int file_id, std::string fileName, int file_size);
+		void appendContent(int file_id, const char* data, int dataLen);
+		void close(int file_id);
+		void writeFileFunc();
+		void exitDownloadAndClose();
 
 	private:
 
-		void writeFileFunc();
+		bool quit_;
 
 		muduo::BlockingQueue<DataUnit>	queue_;
 		std::map<int, FileInfoPtr>	fileList_;
@@ -101,6 +103,7 @@ namespace edwards
 
 		explicit FileServer(EventLoop *loop,
 							const InetAddress& listenAddr,
+							int maxConnections,
 							const std::string& name);
 		~FileServer() = default;
 
@@ -112,8 +115,8 @@ namespace edwards
 
 
 
-		void sendStartResponse(int recvPn, const ClientFile::FileInfoPtr& file);
-		void sendFrameResponse(int recvPn, const ClientFile::FileInfoPtr& file);
+		void sendStartResponse(int recvPn, int fileId, std::string result, std::string reason);
+		void sendFrameResponse(int recvPn, int fileId, int frameLen, std::string result, std::string reason);
 		void sendEndResponse(int recvPn, const ClientFile::FileInfoPtr& file);
 
 		void onUploadStartRequest(const muduo::net::TcpConnectionPtr& conn,
@@ -144,6 +147,8 @@ namespace edwards
 		ProtobufDispatcher	dispatcher_;
 		ProtobufCodec		codec_;
 		TaskThreadPool		pool_;
+		const int			kMaxConnections_;
+		int					numConnected_; // should be atomic_int
 		std::map<int, TcpConnectionPtr> clientConns_;//多个客户
 	};
 }

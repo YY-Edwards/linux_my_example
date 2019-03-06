@@ -60,7 +60,7 @@ public:
 	typedef std::shared_ptr<FileContainer> MapPtr;
 
 	typedef std::shared_ptr<edwards::UploadStartRequest> UploadStartRequestPtr;
-	typedef std::shared_ptr<edwards::UploadStartReponse> UploadStartReponsePtr;
+	typedef std::shared_ptr<edwards::UploadStartResponse> UploadStartResponsePtr;
 	typedef std::shared_ptr<edwards::FileFrameTransferRequest> FileFrameTransferRequestPtr;
 	typedef std::shared_ptr<edwards::FileFrameTransferResponse> FileFrameTransferResponsePtr;
 	typedef std::shared_ptr<edwards::UploadEndRequest> UploadEndRequestPtr;

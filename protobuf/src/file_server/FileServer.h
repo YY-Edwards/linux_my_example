@@ -53,6 +53,7 @@ namespace edwards
 		{
 			FilePtr			ctx;
 			std::string		name;
+			int				lenIndex;
 			int				size;
 			std::string		storagePath;
 			FileStateCode	state;
@@ -61,6 +62,7 @@ namespace edwards
 		struct DataUnit
 		{
 			int id;
+			int payloadLen;
 			char payload[kPayloadSize];
 			//std::vector<char> payload;
 		};
@@ -68,19 +70,31 @@ namespace edwards
 
 		typedef std::shared_ptr<ClientUploadFileInfo> FileInfoPtr;
 
-		ClientFile();
+		ClientFile(const std::string& clientName);
 		~ClientFile();
 
 		bool create(int file_id, std::string fileName, int file_size);
-		void appendContent(int file_id, const char* data, int dataLen);
-		void close(int file_id);
+		bool appendContent(int file_id, const char* data, int dataLen);
+		void remove(int file_id);
+		static void onCloseFileDescriptor(FILE *fp)
+		{
+			LOG_DEBUG << "close fp: " <<fp;
+			fclose(fp);
+		}
+		bool isWriteFileFinished(int file_id);
 		void writeFileFunc();
 		void exitDownloadAndClose();
 
 	private:
 
 		bool quit_;
+		bool running_;
+		std::string connName_;
+		std::string storagePath_;
+		mutable MutexLock mutex_;//可以在const修饰的函数中使用
+		Condition notRun_;
 
+		bool isFileExisted(int file_id);
 		muduo::BlockingQueue<DataUnit>	queue_;
 		std::map<int, FileInfoPtr>	fileList_;
 	};
@@ -90,8 +104,6 @@ namespace edwards
 	class FileServer :noncopyable
 	{
 	public:
-
-
 
 
 		typedef std::shared_ptr<edwards::UploadStartRequest> UploadStartRequestPtr;
@@ -115,9 +127,23 @@ namespace edwards
 
 
 
-		void sendStartResponse(int recvPn, int fileId, std::string result, std::string reason);
-		void sendFrameResponse(int recvPn, int fileId, int frameLen, std::string result, std::string reason);
-		void sendEndResponse(int recvPn, const ClientFile::FileInfoPtr& file);
+		void sendStartResponse(const muduo::net::TcpConnectionPtr& conn, 
+								int recvPn, 
+								int fileId, 
+								const std::string& result, 
+								const std::string& reason);
+		void sendFrameResponse(const muduo::net::TcpConnectionPtr& conn,
+								int recvPn, 
+								int fileId, 
+								int frameSize,
+								const std::string& result,
+								const std::string& reason);
+		void sendEndResponse(const muduo::net::TcpConnectionPtr& conn, 
+								int recvPn, 
+								int fileId,
+								const std::string& fileName,
+								const std::string& result,
+								const std::string& reason);
 
 		void onUploadStartRequest(const muduo::net::TcpConnectionPtr& conn,
 								  const UploadStartRequestPtr& message,

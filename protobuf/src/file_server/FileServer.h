@@ -99,6 +99,7 @@ namespace edwards
 		std::map<int, FileInfoPtr>	fileList_;
 	};
 
+	typedef std::shared_ptr<edwards::ClientFile> ClientFilePtr;
 
 
 	class FileServer :noncopyable

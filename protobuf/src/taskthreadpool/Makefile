@@ -4,10 +4,6 @@ CXX = g++
 #需要的头文件路径
 INC += \
 -I $(MUDUOINC) \
--I $(OBJSDIR)/../src \
--I $(OBJSDIR)/../src/codec \
--I $(OBJSDIR)/../src/dispatcher \
--I $(OBJSDIR)/../src/file_proto_api \
 -I /usr/include/
 
 

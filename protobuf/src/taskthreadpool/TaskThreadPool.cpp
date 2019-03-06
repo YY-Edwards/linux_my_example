@@ -101,10 +101,10 @@ void TaskThreadPool::stop()
 void TaskThreadPool::start(int numbThreads)
 {
 	threads_.reserve(numbThreads);//重置容器空间大小
-	for (size_t i = 0; i < numbThreads; i++)
+	for (int i = 0; i < numbThreads; i++)
 	{
 		char id[32];
-		snprintf(id, sizeof id, "%d", i + 1);
+		snprintf(id, sizeof id, "%d", (i + 1));
 
 		//std::unique_ptr<Thread> p(new Thread(std::bind(&TaskThreadPool::threadFunc, this), name_ + id));
 		//threads_.push_back(std::move(p));//放弃管理权

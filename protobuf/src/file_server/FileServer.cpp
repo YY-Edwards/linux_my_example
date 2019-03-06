@@ -11,7 +11,6 @@
 
 #include "FileServer.h"
 
-#include <io.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -32,10 +31,10 @@ ClientFile::ClientFile(const std::string& clientName)
 {
 	
 	storagePath_ = FirstPath + connName_;//每一个客户连接创建一个路劲
-	if (access(path.c_str(), F_OK) != 0)
+	if (access(storagePath_.c_str(), F_OK) != 0)
 	{
 		int status;
-		status = mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+		status = mkdir(storagePath_.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
 	}
 	LOG_TRACE;

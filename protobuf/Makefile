@@ -64,6 +64,16 @@ LDFLAGS +=  \
 #-lmuduo_net_cpp11 -lmuduo_base_cpp11 -pthread -lrt
 #Makefile中的第一个目标会被作为其默认目标。我们声明了一个“all”的伪目标，其依赖于其它三个目标。由于伪目标的特性是，总是被执行的，所以其依赖的那三个目标就总是不如“all”这个目标新。
 #所以，其它三个目标的规则总是会被决议。也就达到了我们一口气生成多个目标的目的。“.PHONY : all”声明了“all”这个目标为“伪目标”
+
+#
+#Makefile 中的第一个目标会被作为其默认目标。我们声明了一个“all”的伪目标，
+#其依赖于其它三个目标。由于伪目标的特性是，总是被执行的，
+#所以其依赖的那三个目标就总是不如“all”这个目标新。
+#所以，其它三个目标的规则总是会被决议。也就达到了我们一口气生成多个目标的目的。
+#“.PHONY : all”声明了“all”这个目标为“伪目标
+
+
+
 .PHONY : all
 all: $(TARGET_CODEC_TEST) $(TARGET_DISPATCHER_TEST) $(TARGET_CLIENT_TEST) $(TARGET_SERVER_TEST) \
 $(TARGET_FILEUPLOAD_CLIENT_TEST) $(TARGET_FILEUPLOAD_SERVER_TEST) 
@@ -72,11 +82,18 @@ $(TARGET_FILEUPLOAD_CLIENT_TEST) $(TARGET_FILEUPLOAD_SERVER_TEST)
 
 #目标：依赖项
 # 命令
-$(TARGET_CODEC_TEST): $(OBJSDIR_TEST_CODEC) $(OBJSDIR_MODULE) $(OBJSDIR) $(ASDF)
+$(TARGET_CODEC_TEST):  $(OBJSDIR_TEST_CODEC) $(OBJSDIR_MODULE) $(OBJSDIR) $(ASDF)
 	$(MAKE) -C src/test/codec_test
 	$(MAKE) -C src/codec
 	$(MAKE) -C src
-	$(CXX) $(CXXFLAGS)  $(OBJSDIR)/*.o $(OBJSDIR_MODULE)/*.o $(OBJSDIR_TEST_CODEC)/*.o  -o $(ASDF)/$(TARGET_CODEC_TEST) $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) $(OBJSDIR)/*.o $(OBJSDIR_MODULE)/*.o $(OBJSDIR_TEST_CODEC)/*.o  -o $(ASDF)/$(TARGET_CODEC_TEST) $(LDFLAGS)
+	
+
+#$(TARGET_CODEC_TEST): $(OBJSDIR_TEST_CODEC) $(OBJSDIR_MODULE) $(OBJSDIR) $(ASDF)
+#$(MAKE) -C src/test/codec_test
+#$(MAKE) -C src/codec
+#$(MAKE) -C src
+#$(CXX) $(CXXFLAGS)  $(OBJSDIR)/*.o $(OBJSDIR_MODULE)/*.o $(OBJSDIR_TEST_CODEC)/*.o  -o $(ASDF)/$(TARGET_CODEC_TEST) $(LDFLAGS)
 	
 $(TARGET_DISPATCHER_TEST):$(OBJSDIR_TEST_DISPATCHER) $(OBJSDIR_MODULE) $(ASDF)
 	
@@ -139,7 +156,8 @@ $(ASDF):
 #而在rm命令前面加了一个小减号的意思就是，也许某些文件出现问题，但不要管，继续做后面的事。
 #当然，clean的规则不要放在文件的开头，不然，这就会变成make的默认目标，相信谁也不愿意这样。不成文的规矩是——“clean从来都是放在文件的最后”。	
 
-#$(foreach <var>,<list>,<text> )	
+#$(foreach <var>,<list>,<text> )
+#显示的说明clean是个伪目标	
 .PHONY:clean	
 clean:
 	-$(RM) $(foreach dir, $(OBJSDIR_TEST_CLIENT), $(wildcard $(dir)/*.o))

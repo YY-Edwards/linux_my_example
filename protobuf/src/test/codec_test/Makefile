@@ -12,14 +12,14 @@ INC += \
 CXXFLAGS +=  -std=c++11 -g
 
 #所有的.c文件
-CC_FILES = $(wildcard *.c)
-CC_OBJS = $(patsubst %.c, %.o, $(CC_FILES))
-CC_DEP = $(patsubst %.c, %.d, $(CC_FILES))
+CC_FILES	= $(wildcard *.c)
+CC_OBJS	 	= $(patsubst %.c, %.o, $(CC_FILES))
+CC_DEP 		= $(patsubst %.c, %.d, $(CC_FILES))
 
 #所有的.c++文件
-CXX_FILES = $(wildcard *.cpp)
-CXX_OBJS = $(patsubst %.cpp, %.o, $(CXX_FILES))
-CXX_DEP = $(patsubst %.cpp, %.d, $(CXX_FILES))
+CXX_FILES 	= $(wildcard *.cpp)
+CXX_OBJS 	= $(patsubst %.cpp, %.o, $(CXX_FILES))
+CXX_DEP 	= $(patsubst %.cpp, %.d, $(CXX_FILES))
 
 #Makefile 文件中的特殊变量“VPATH”就是完成这个功能的，如果没有
 #指明这个变量，make 只会在当前的目录中去找寻依赖文件和目标文
@@ -39,7 +39,8 @@ vpath %.o $(OBJSDIR_TEST_CODEC)
 #依赖模式“%.c”则取模式“%.o”的“%”，也就是$obj，并
 #为其加下“.c”的后缀，于是，我们的依赖目标就是“$obj.c”;
 
-#而命令中的“$<”和“$@”则是自动化变量，“$<”表示所有的依赖目标集
+#而命令中的“$<”和“$@”则是自动化变量，“$<”表示所有的依赖目标集(即是*.c或者*.cpp)
+#“$@”表示目标集（*.o）
 
 
 

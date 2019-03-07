@@ -21,7 +21,7 @@ using namespace muduo::net;
 int main(int argc, char* argv[])
 {
 
-	Logger::setLogLevel(Logger::TRACE);
+	Logger::setLogLevel(Logger::DEBUG);
 	LOG_INFO << "pid = " << getpid();
 
 	if (argc == 3)

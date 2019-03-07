@@ -101,6 +101,7 @@ void TaskThreadPool::stop()
 void TaskThreadPool::start(int numbThreads)
 {
 	threads_.reserve(numbThreads);//重置容器空间大小
+	running_ = true;
 	for (int i = 0; i < numbThreads; i++)
 	{
 		char id[32];
@@ -119,7 +120,6 @@ void TaskThreadPool::start(int numbThreads)
 	{
 		threadInitCallback_();
 	}
-	running_ = true;
 }
 
 void TaskThreadPool::runInThread()
@@ -131,7 +131,7 @@ void TaskThreadPool::runInThread()
 			threadInitCallback_();
 		}
 
-		while (!running_)//判断是否退出循环
+		while (running_)//判断是否退出循环
 		{
 			Task task(take());//取出任务并构造，如果为空，则等待
 			if (task)//任务不为空

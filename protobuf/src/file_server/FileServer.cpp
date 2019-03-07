@@ -37,7 +37,7 @@ ClientFile::ClientFile(const std::string& clientName)
 		status = mkdir(storagePath_.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
 	}
-	LOG_TRACE;
+	LOG_DEBUG;
 }
 
 ClientFile::~ClientFile()
@@ -45,12 +45,12 @@ ClientFile::~ClientFile()
 	if (running_)
 	{
 		exitDownloadAndClose();
-		LOG_TRACE;
+		LOG_DEBUG;
 		//3s后再退出对象。如果3s后对象已销毁，而线程池里的注册任务还没退出，
 		//则可能发生未定义行为。
 		notRun_.waitForSeconds(3);
 	}
-	LOG_TRACE;
+	LOG_DEBUG;
 }
 
 bool ClientFile::create(int file_id, std::string fileName, int file_size)
@@ -60,6 +60,12 @@ bool ClientFile::create(int file_id, std::string fileName, int file_size)
 	pFile = fopen(((storagePath_+fileName).c_str()), "wb");//打开或创建一个只写文件
 	if (pFile != NULL)
 	{
+		//每一个文件设定一个输出缓冲区
+		//所有写入到pFile的输出都应该使用buffer_作为输出缓冲区，
+		//直到buffer_缓冲区被填满或者程序员直接调用fflush（译注：对于由写操作打开的文件，调用fflush将导致输出缓冲区的内容被实际地写入该文件），
+		//buffer_缓冲区中的内容才实际写入到pFile
+		::setbuffer(pFile, buffer_, sizeof buffer_);
+
 		FileInfoPtr newFileInfoPtr(new ClientUploadFileInfo);//新建
 		FilePtr p(pFile, onCloseFileDescriptor);//用已存在的构造一个新的
 
@@ -132,7 +138,7 @@ void ClientFile::writeFileFunc()
 	while (!quit_)
 	{
 		DataUnit dataUnit(queue_.take());
-		LOG_TRACE;
+		LOG_DEBUG;
 		if (dataUnit.id == 0 || quit_)
 		{
 			break;
@@ -143,8 +149,8 @@ void ClientFile::writeFileFunc()
 			MutexLockGuard lock(mutex_);
 			fp = fileList_[dataUnit.id]->ctx;
 		}
-			
-		size_t n = fwrite(dataUnit.payload, 1, dataUnit.payloadLen, fp.get());
+		size_t n = fwrite_unlocked(dataUnit.payload, 1, dataUnit.payloadLen, fp.get());
+		//size_t n = fwrite(dataUnit.payload, 1, dataUnit.payloadLen, fp.get());
 		assert(n == dataUnit.payloadLen);
 
 		{
@@ -154,6 +160,7 @@ void ClientFile::writeFileFunc()
 			if (fileList_[dataUnit.id]->size == fileList_[dataUnit.id]->lenIndex)
 			{
 				fileList_[dataUnit.id]->state = kWriteFinished;
+				fflush(fp.get());//刷新一次输出
 			}
 			else
 			{
@@ -162,7 +169,7 @@ void ClientFile::writeFileFunc()
 		}
 
 	}
-	LOG_TRACE;
+	LOG_DEBUG;
 	running_ = false;
 	notRun_.notify();
 }
@@ -254,7 +261,7 @@ void FileServer::onConnection(const TcpConnectionPtr& conn)
 			assert(getObjPtr);
 			if (pool_.isPoolFree())
 			{
-				LOG_TRACE << "addTask.";
+				LOG_DEBUG << "addTask.";
 				pool_.addTask(std::bind(&ClientFile::writeFileFunc, getObjPtr));
 			}
 		}

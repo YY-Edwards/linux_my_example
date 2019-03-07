@@ -97,6 +97,7 @@ namespace edwards
 		bool isFileExisted(int file_id);
 		muduo::BlockingQueue<DataUnit>	queue_;
 		std::map<int, FileInfoPtr>	fileList_;
+		char buffer_[32 * 1024];//32k
 	};
 
 	typedef std::shared_ptr<edwards::ClientFile> ClientFilePtr;

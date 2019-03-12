@@ -37,7 +37,7 @@ using namespace muduo;
 using namespace muduo::net;
 
 const int8_t	kMaxFileId = 5;
-const int16_t	kMaxPackageNumb = 0x9000;
+const uint16_t	kMaxPackageNumb = 0x9000;
 const int		kBufSize = 10 * 1024;//10k
 
 typedef std::shared_ptr<FILE> FilePtr;
@@ -99,7 +99,7 @@ public:
 	void connect()
 	{
 		client_.connect();
-		//client_.enableRetry();//开启断开重连功能
+		client_.enableRetry();//开启断开重连功能
 	}
 
 	bool isConnected() const//函数里内容不允许改变
@@ -117,6 +117,10 @@ public:
 		client_.disconnect();
 	}
 
+	void stop()
+	{
+		client_.stop();
+	}
 	void uploadTheFile(const std::string& fileName)
 	{
 
@@ -155,7 +159,7 @@ private:
 
 	FileInfo* parseFileInfo(const std::string& path)
 	{
-		FileInfo* file = new FileInfo;
+		FileInfo* file = NULL; 
 
 		FILE * pFile = fopen(path.c_str(), "rb");
 		if (pFile != NULL)
@@ -164,6 +168,7 @@ private:
 			assert(found != std::string::npos);	
 			LOG_DEBUG << "file path: " << path.substr(0, found);
 			LOG_DEBUG << "file name: " << path.substr(found+1);
+			file = new FileInfo;
 			file->name = path.substr(found+1);
 
 			struct stat st;
@@ -194,6 +199,7 @@ private:
 		startReq.set_file_name(file->name);
 		startReq.set_file_size(file->size);
 		startReq.set_file_fromat(file->format);
+		LOG_DEBUG;
 		{
 			MutexLockGuard lock(pMutex_);
 			codec_.send(conn_, startReq);
@@ -201,7 +207,7 @@ private:
 	}
 	void sendFrameReqToBackend(int assignedId, const FileInfoPtr& file)
 	{
-		char buf[kBufSize];
+		char buf[kBufSize] = {0};
 		size_t nread = fread(buf, 1, sizeof buf, (file->ctx).get());
 		if (nread > 0)
 		{
@@ -441,7 +447,7 @@ int main(int argc, char* argv[])
 	muduo::Logger::setLogLevel(Logger::DEBUG);
 	LOG_INFO << "pid = " << getpid();
 
-	if (argc < 2)
+	if (argc < 3)
 	{
 		printf("Usage: %s [ip:listen_port] [-] \n", argv[0]);
 	}
@@ -467,7 +473,7 @@ int main(int argc, char* argv[])
 
 				EventLoopThread loopThread;
 				g_loop = loopThread.startLoop();
-				g_loop->runEvery(7.0, memstat);//间隔查询内存分配
+				g_loop->runEvery(17.0, memstat);//间隔查询内存分配
 
 				FileUploadClient client(g_loop, InetAddress(hostip, port), "UpLoadFileClient");
 				client.connect();
@@ -484,7 +490,9 @@ int main(int argc, char* argv[])
 
 				client.disconnect();
 				LOG_DEBUG;
+				client.stop();
 				CurrentThread::sleepUsec(5000 * 1000);//5s
+
 				LOG_DEBUG;
 			}
 		}

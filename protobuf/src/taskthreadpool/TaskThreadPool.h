@@ -42,7 +42,6 @@ namespace edwards
 		void setThreadInitCallback(const Task& cb);
 		void setMaxQueueSize(int maxSize){ maxQueueSize_ = maxSize; }
 
-		bool isPoolFree(){ return !isTaskQueueFull(); }
 		//添加任务接口
 		void addTask(const Task& cb);
 

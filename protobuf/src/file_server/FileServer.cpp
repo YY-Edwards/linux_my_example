@@ -11,8 +11,8 @@
 
 #include "FileServer.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/stat.h> 
 
 using namespace muduo;
 using namespace muduo::net;
@@ -29,14 +29,27 @@ ClientFile::ClientFile(const std::string& clientName)
 			, notRun_(mutex_)
 
 {
-	
+	int status;
 	storagePath_ = FirstPath + connName_;//每一个客户连接创建一个路劲
-	if (access(storagePath_.c_str(), F_OK) != 0)
-	{
-		int status;
-		status = mkdir(storagePath_.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
+	if (access(FirstPath.c_str(), F_OK) != 0)//第一级目录
+	{
+		status = mkdir(FirstPath.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+		if (status < 0)
+		{
+			LOG_WARN << "mkdir FirstPath err: " << strerror(errno);
+		}
 	}
+
+	if ((access(storagePath_.c_str(), F_OK) != 0))//二级目录
+	{
+		status = mkdir(storagePath_.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+		if (status < 0)
+		{
+			LOG_WARN << "mkdir storagePath err: " << strerror(errno);
+		}
+	}
+
 	LOG_DEBUG;
 }
 
@@ -56,8 +69,9 @@ ClientFile::~ClientFile()
 bool ClientFile::create(int file_id, std::string fileName, int file_size)
 {
 	bool ret = false;
-	FILE * pFile;
-	pFile = fopen(((storagePath_+fileName).c_str()), "wb");//打开或创建一个只写文件
+	FILE * pFile =NULL;
+	std::string filePath = storagePath_ + "/" + fileName;
+	pFile = fopen(filePath.c_str(), "wb");//打开或创建一个只写文件
 	if (pFile != NULL)
 	{
 		//每一个文件设定一个输出缓冲区
@@ -161,6 +175,7 @@ void ClientFile::writeFileFunc()
 			{
 				fileList_[dataUnit.id]->state = kWriteFinished;
 				fflush(fp.get());//刷新一次输出
+				LOG_DEBUG << "write file finished.";
 			}
 			else
 			{
@@ -214,9 +229,10 @@ FileServer::FileServer(EventLoop *loop,
 		std::bind(&FileServer::onConnection, this, _1));
 	server_.setMessageCallback(
 		std::bind(&ProtobufCodec::onMessage, &codec_, _1, _2, _3));
-
-	pool_.setMaxQueueSize(5);
-	pool_.start(5);//设定线程池大小
+	
+	//每个连接对应线程池里的一个任务
+	pool_.setMaxQueueSize(kMaxConnections_);
+	pool_.start(kMaxConnections_);//设定线程池大小
 
 }
 
@@ -251,19 +267,22 @@ void FileServer::onConnection(const TcpConnectionPtr& conn)
 		{
 			//构造一个客户文件对象，并与TcpConnectionPtr绑定
 			//注意ClientFile为含有禁止拷贝对象
+			//注意：这里是否可以使用std::ref来包装对象的引用，然后再传递
+			//让boost::Any存储对象引用的拷贝,
+			//当然这得保证引用被调用时对象是存在的
 			{
-				ClientFilePtr newObj(new edwards::ClientFile(conn->name()));
+				ClientFilePtr newObj(new edwards::ClientFile(conn->peerAddress().toIpPort()));
 				assert(newObj);
 				conn->setContext(newObj);
 			}
 			//取出每一个客户端绑定的文件对象
 			getObjPtr = *boost::any_cast<ClientFilePtr>(conn->getMutableContext());
 			assert(getObjPtr);
-			if (pool_.isPoolFree())
-			{
-				LOG_DEBUG << "addTask.";
-				pool_.addTask(std::bind(&ClientFile::writeFileFunc, getObjPtr));
-			}
+
+			//注意避免任务太多导致的阻塞
+			LOG_DEBUG << "addTask.";
+			pool_.addTask(std::bind(&ClientFile::writeFileFunc, getObjPtr));
+
 		}
 
 	}
@@ -286,9 +305,11 @@ void FileServer::onUploadStartRequest(const muduo::net::TcpConnectionPtr& conn,
 									  const UploadStartRequestPtr& message,
 									  muduo::Timestamp t)
 {
-	LOG_DEBUG << "onUploadStartRequest: " << message->GetTypeName()
-				<< "\n"
-				<< message->DebugString();
+	LOG_DEBUG << message->GetTypeName() << "\n"
+		<< "pn: " << message->package_numb() << "\n"
+		<< "file_id:" << message->file_id() << "\n"
+		<< "file_name:" << message->file_name() << "\n"
+		<< "file_size:" << message->file_size() << "\n";
 
 	//取出每一个客户端绑定的文件对象
 	ClientFilePtr getObjPtr = *boost::any_cast<ClientFilePtr>(conn->getMutableContext());
@@ -312,9 +333,13 @@ void FileServer::onFileFrameTransferRequest(const muduo::net::TcpConnectionPtr& 
 											const FileFrameTransferRequestPtr& message,
 									        muduo::Timestamp t)
 {
-	LOG_DEBUG << "onFileFrameTransferRequest: " << message->GetTypeName()
+	LOG_DEBUG << message->GetTypeName()
 		<< "\n"
-		<< message->DebugString();
+		<< "pn: " << message->package_numb() << "\n"
+		<< "file_id:" << message->file_id() << "\n"
+		<< "frame_size:" << message->frame_size() << "\n";
+
+		//<< message->DebugString();
 
 	//取出每一个客户端绑定的文件对象
 	ClientFilePtr getObjPtr = *boost::any_cast<ClientFilePtr>(conn->getMutableContext());
@@ -335,9 +360,10 @@ void FileServer::onUploadEndRequest(const muduo::net::TcpConnectionPtr& conn,
 									const UploadEndRequestPtr& message,
 									muduo::Timestamp t)
 {
-	LOG_DEBUG << "onUploadEndRequest: " << message->GetTypeName()
-		<< "\n"
-		<< message->DebugString();
+	LOG_DEBUG << message->GetTypeName()
+		<< "pn: " << message->package_numb() << "\n"
+		<< "file_id:" << message->file_id() << "\n"
+		<< "frame_name:" << message->file_name() << "\n";
 
 	//取出每一个客户端绑定的文件对象
 	//取出每一个客户端绑定的文件对象

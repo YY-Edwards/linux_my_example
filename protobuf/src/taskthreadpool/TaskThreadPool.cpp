@@ -32,7 +32,7 @@ void TaskThreadPool::setThreadInitCallback(const Task& cb)
 bool TaskThreadPool::isTaskQueueFull() const
 {
 
-	MutexLockGuard lock(mutex_);
+	mutex_.assertLocked();//确保外层已上过锁
 	return maxQueueSize_ > 0 && queue_.size() >= maxQueueSize_;
 
 }

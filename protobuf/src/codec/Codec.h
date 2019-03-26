@@ -38,7 +38,7 @@ public:
 	enum ErrorCode
 	{
 		kNoError = 0,
-		kinvalidLength,
+		kInvalidLength,
 		kCheckSumError,
         kInvalidNameLen,
 		kUnkownMessageType,

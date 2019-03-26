@@ -35,6 +35,7 @@ namespace edwards
 
 
 	const int		kPayloadSize = 10 * 1024;//10k
+	const int		kStreamBuffReduceRatio = 20;
 
 	class ClientFile
 	{
@@ -54,9 +55,10 @@ namespace edwards
 			FilePtr			ctx;
 			std::string		name;
 			int				lenIndex;
-			int				size;
+			uint64_t		size;//Í»ÆÆ4G
 			std::string		storagePath;
 			FileStateCode	state;
+			std::shared_ptr<char> streamBuffPtr;
 		};
 
 		struct DataUnit
@@ -73,7 +75,7 @@ namespace edwards
 		ClientFile(const std::string& clientName);
 		~ClientFile();
 
-		bool create(int file_id, std::string fileName, int file_size);
+		bool create(int file_id, std::string fileName, uint64_t file_size);
 		bool appendContent(int file_id, const char* data, int dataLen);
 		void remove(int file_id);
 		static void onCloseFileDescriptor(FILE *fp)
@@ -97,7 +99,7 @@ namespace edwards
 		bool isFileExisted(int file_id);
 		muduo::BlockingQueue<DataUnit>	queue_;
 		std::map<int, FileInfoPtr>	fileList_;
-		char buffer_[32 * 1024];//32k
+		//char buffer_[32 * 1024];//32k
 	};
 
 	typedef std::shared_ptr<edwards::ClientFile> ClientFilePtr;

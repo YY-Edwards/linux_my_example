@@ -99,7 +99,7 @@ void ProtobufCodec::fillEmptyBuffer(muduo::net::Buffer* buf, const google::proto
 	 {
 	 case kNoError:
 		 return kNoErrorStr;
-	 case kinvalidLength:
+	 case kInvalidLength:
 		 return kInvalidLengthStr;
 	 case kCheckSumError:
 		 return kCheckSumErrorStr;
@@ -203,7 +203,7 @@ void ProtobufCodec::fillEmptyBuffer(muduo::net::Buffer* buf, const google::proto
 		 const int32_t len = buf->peekInt32();//为了跨语言移植，java中没有unsigned
 		 if (len > kMaxMessageLen || len < kMinMessageLen)//超过设定的最高门限
 		 {
-			 errorCallback_(conn, buf, receviceTime, kinvalidLength);
+			 errorCallback_(conn, buf, receviceTime, kInvalidLength);
 			 break;//默认操作直接disconnect peer,考虑是否需要手动偏移buf
 		 }
 		 else if (buf->readableBytes() >= implicit_cast<size_t>(len + kHeaderLen))//完整或粘包都可以通过

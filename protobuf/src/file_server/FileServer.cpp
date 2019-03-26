@@ -66,7 +66,7 @@ ClientFile::~ClientFile()
 	LOG_DEBUG;
 }
 
-bool ClientFile::create(int file_id, std::string fileName, int file_size)
+bool ClientFile::create(int file_id, std::string fileName, uint64_t file_size)
 {
 	bool ret = false;
 	FILE * pFile =NULL;
@@ -78,9 +78,18 @@ bool ClientFile::create(int file_id, std::string fileName, int file_size)
 		//所有写入到pFile的输出都应该使用buffer_作为输出缓冲区，
 		//直到buffer_缓冲区被填满或者程序员直接调用fflush（译注：对于由写操作打开的文件，调用fflush将导致输出缓冲区的内容被实际地写入该文件），
 		//buffer_缓冲区中的内容才实际写入到pFile
-		::setbuffer(pFile, buffer_, sizeof buffer_);
 
-		FileInfoPtr newFileInfoPtr(new ClientUploadFileInfo);//新建
+		//每一个文件缓冲区大小都按其文件的总大小的一定比列(20)设定。
+		std::shared_ptr<char> buffPtr;
+		if (file_size > kStreamBuffReduceRatio)
+		{
+			uint64_t mallocSize = file_size / kStreamBuffReduceRatio;
+			std::shared_ptr<char> arrayPtr(new char[mallocSize], std::default_delete<char[]>());
+			::setbuffer(pFile, arrayPtr.get(), mallocSize);
+			buffPtr = arrayPtr;//增加引用
+		}
+
+		FileInfoPtr newFileInfoPtr(new ClientUploadFileInfo);//新建，不需要定时删除器，全部可以自动释放
 		FilePtr p(pFile, onCloseFileDescriptor);//用已存在的构造一个新的
 
 		newFileInfoPtr->ctx		= p;
@@ -89,6 +98,7 @@ bool ClientFile::create(int file_id, std::string fileName, int file_size)
 		newFileInfoPtr->state	= kWaitToWrite;
 		newFileInfoPtr->lenIndex = 0;
 		newFileInfoPtr->storagePath = storagePath_;
+		newFileInfoPtr->streamBuffPtr = buffPtr;
 
 		{
 			MutexLockGuard lock(mutex_);
@@ -365,7 +375,6 @@ void FileServer::onUploadEndRequest(const muduo::net::TcpConnectionPtr& conn,
 		<< "file_id:" << message->file_id() << "\n"
 		<< "frame_name:" << message->file_name() << "\n";
 
-	//取出每一个客户端绑定的文件对象
 	//取出每一个客户端绑定的文件对象
 	ClientFilePtr getObjPtr = *boost::any_cast<ClientFilePtr>(conn->getMutableContext());
 	assert(getObjPtr);

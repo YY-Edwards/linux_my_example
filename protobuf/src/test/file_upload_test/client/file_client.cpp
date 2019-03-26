@@ -315,17 +315,45 @@ private:
 			<< "\n"
 			<< message->DebugString();
 
-		//取出已占用id
-		int Id = message->file_id();
-		assert(Id > 0 && Id <= kMaxFileId);
+
+		if (message->result().compare("success") != 0)
 		{
-			MutexLockGuard lock(mutex_);
-			avalidFileIds_.push(Id);//回收已分配的id
-			LOG_DEBUG;
-			auto numb = filesmap_.erase(Id);//删除已上传的文件信息
-			LOG_DEBUG;
-			assert(numb != 0);
+			int recvId = message->file_id();
+			LOG_DEBUG << "recv file id: " << recvId;
+
+			{
+				FileInfoPtr findFile;
+				{
+					MutexLockGuard lock(mutex_);
+					FileContainer::iterator it = filesmap_.find(recvId);
+					if (it != filesmap_.end())//存在
+					{
+						findFile = (it->second);//增加引用
+					}
+				}
+				if (findFile)
+				{
+					LOG_DEBUG << "Resend UploadEnd request.";
+					sendEndReqToBackend(recvId, findFile);
+				}
+			}
 		}
+		else//上传服务端已完成
+		{
+			//取出已占用id
+			int Id = message->file_id();
+			assert(Id > 0 && Id <= kMaxFileId);
+			{
+				MutexLockGuard lock(mutex_);
+				avalidFileIds_.push(Id);//回收已分配的id
+				LOG_DEBUG;
+				auto numb = filesmap_.erase(Id);//删除已上传的文件信息
+				LOG_DEBUG;
+				assert(numb != 0);
+			}
+			LOG_DEBUG << "UploadEnd file okay.";
+		}
+
 	}
 
 

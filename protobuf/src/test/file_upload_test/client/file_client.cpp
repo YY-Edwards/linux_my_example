@@ -283,12 +283,15 @@ private:
 		muduo::Timestamp t)
 	{
 
-		LOG_DEBUG << "onFileFrameTransferResponse: " << message->GetTypeName()
-			<< "\n"
-			<< message->DebugString();
-
 		int recvId = message->file_id();
-		LOG_DEBUG << "recv file id: " << recvId;
+		if (message->package_numb() % 700 == 0)//每700次调用，输出一次日志
+		{
+			LOG_DEBUG << "onFileFrameTransferResponse: " << message->GetTypeName()
+				<< "\n"
+				<< message->DebugString();
+
+			LOG_DEBUG << "recv file id: " << recvId;
+		}
 
 		FileInfoPtr findFile;
 		{
@@ -351,7 +354,7 @@ private:
 				LOG_DEBUG;
 				assert(numb != 0);
 			}
-			LOG_DEBUG << "UploadEnd file okay.";
+			LOG_DEBUG << "UploadEnd file_id:"<< Id <<" okay.";
 		}
 
 	}

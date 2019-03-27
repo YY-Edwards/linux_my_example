@@ -58,10 +58,10 @@ ClientFile::~ClientFile()
 	if (running_)
 	{
 		exitDownloadAndClose();
-		LOG_DEBUG;
-		//3s后再退出对象。如果3s后对象已销毁，而线程池里的注册任务还没退出，
-		//则可能发生未定义行为。
-		notRun_.waitForSeconds(3);
+		//LOG_DEBUG;
+		////3s后再退出对象。如果3s后对象已销毁，而线程池里的注册任务还没退出，
+		////则可能发生未定义行为。
+		//notRun_.waitForSeconds(3);
 	}
 	LOG_DEBUG;
 }
@@ -78,6 +78,8 @@ bool ClientFile::create(int file_id, std::string fileName, uint64_t file_size)
 		//所有写入到pFile的输出都应该使用buffer_作为输出缓冲区，
 		//直到buffer_缓冲区被填满或者程序员直接调用fflush（译注：对于由写操作打开的文件，调用fflush将导致输出缓冲区的内容被实际地写入该文件），
 		//buffer_缓冲区中的内容才实际写入到pFile
+
+		LOG_DEBUG << "new pFile: " << pFile;
 
 		//每一个文件缓冲区大小都按其文件的总大小的一定比列(20)设定。
 		std::shared_ptr<char> buffPtr;
@@ -162,37 +164,49 @@ void ClientFile::writeFileFunc()
 	while (!quit_)
 	{
 		DataUnit dataUnit(queue_.take());
-		LOG_DEBUG;
+		//LOG_DEBUG;
 		if (dataUnit.id == 0 || quit_)
 		{
 			break;
 		}
 
-		FilePtr fp;
 		{
-			MutexLockGuard lock(mutex_);
-			fp = fileList_[dataUnit.id]->ctx;
-		}
-		size_t n = fwrite_unlocked(dataUnit.payload, 1, dataUnit.payloadLen, fp.get());
-		//size_t n = fwrite(dataUnit.payload, 1, dataUnit.payloadLen, fp.get());
-		assert(n == dataUnit.payloadLen);
-
-		{
-			MutexLockGuard lock(mutex_);
-			fileList_[dataUnit.id]->lenIndex += dataUnit.payloadLen;
-
-			if (fileList_[dataUnit.id]->size == fileList_[dataUnit.id]->lenIndex)
+			FilePtr fp;
 			{
-				fileList_[dataUnit.id]->state = kWriteFinished;
-				fflush(fp.get());//刷新一次输出
-				LOG_DEBUG << "write file finished.";
+				//直接下标操作,前提是必须得有。
+				//因为如果不存在，直接下标操作会默认插入一个空指针。
+				MutexLockGuard lock(mutex_);
+				if (fileList_.find(dataUnit.id) != fileList_.end())
+				{
+					fp = fileList_[dataUnit.id]->ctx;
+				}
 			}
-			else
+			if (fp)
 			{
-				fileList_[dataUnit.id]->state = kWritting;
+
+				size_t n = fwrite_unlocked(dataUnit.payload, 1, dataUnit.payloadLen, fp.get());
+				//size_t n = fwrite(dataUnit.payload, 1, dataUnit.payloadLen, fp.get());
+				assert(n == dataUnit.payloadLen);
+			}
+
+			{
+				MutexLockGuard lock(mutex_);
+				if (fileList_.find(dataUnit.id) != fileList_.end())
+				{
+					fileList_[dataUnit.id]->lenIndex += dataUnit.payloadLen;
+					if (fileList_[dataUnit.id]->size == fileList_[dataUnit.id]->lenIndex)
+					{
+						fflush(fp.get());//刷新一次输出
+						fileList_[dataUnit.id]->state = kWriteFinished;
+						LOG_DEBUG << "write file finished.";
+					}
+					else
+					{
+						fileList_[dataUnit.id]->state = kWritting;
+					}
+				}
 			}
 		}
-
 	}
 	LOG_DEBUG;
 	running_ = false;
@@ -201,15 +215,23 @@ void ClientFile::writeFileFunc()
 
 void ClientFile::exitDownloadAndClose()
 {
-	{
-		MutexLockGuard lock(mutex_);
-		fileList_.clear();
-	}
 	quit_ = true;
 	DataUnit dataUnit;
 	dataUnit.id = 0;
 	dataUnit.payloadLen = 0;
 	queue_.put(dataUnit);
+
+	notRun_.waitForSeconds(3);//确定不再操作FileInfoPtr
+	if (running_)
+	{
+		LOG_WARN << "err.";
+	}
+	LOG_DEBUG;
+	//注意生命周期问题：FileInfoPtr
+	{
+		MutexLockGuard lock(mutex_);
+		fileList_.clear();
+	}
 }
 
 
@@ -343,11 +365,14 @@ void FileServer::onFileFrameTransferRequest(const muduo::net::TcpConnectionPtr& 
 											const FileFrameTransferRequestPtr& message,
 									        muduo::Timestamp t)
 {
-	LOG_DEBUG << message->GetTypeName()
-		<< "\n"
-		<< "pn: " << message->package_numb() << "\n"
-		<< "file_id:" << message->file_id() << "\n"
-		<< "frame_size:" << message->frame_size() << "\n";
+	if (message->package_numb() % 700 == 0)//每700次调用，输出一次日志
+	{
+		LOG_DEBUG << message->GetTypeName()
+			<< "\n"
+			<< "pn: " << message->package_numb() << "\n"
+			<< "file_id:" << message->file_id() << "\n"
+			<< "frame_size:" << message->frame_size() << "\n";
+	}
 
 		//<< message->DebugString();
 
@@ -382,7 +407,7 @@ void FileServer::onUploadEndRequest(const muduo::net::TcpConnectionPtr& conn,
 	std::string result = "success";
 	std::string reason = "";
 
-	if (getObjPtr->isWriteFileFinished(message->file_id()))
+	if (getObjPtr->isWriteFileFinished(message->file_id()))//确定写完才会移除
 	{
 		getObjPtr->remove(message->file_id());
 	}

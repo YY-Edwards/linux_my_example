@@ -138,6 +138,7 @@ void TaskThreadPool::runInThread()
 			{
 				LOG_DEBUG <<"take task, tid= "<< muduo::CurrentThread::tid();
 				task();
+				LOG_DEBUG;
 			}
 			else
 			{

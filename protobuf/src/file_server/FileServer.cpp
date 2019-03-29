@@ -221,16 +221,17 @@ void ClientFile::exitDownloadAndClose()
 	dataUnit.payloadLen = 0;
 	queue_.put(dataUnit);
 
-	notRun_.waitForSeconds(3);//确定不再操作FileInfoPtr
-	if (running_)
-	{
-		LOG_WARN << "err.";
-	}
-	LOG_DEBUG;
-	//注意生命周期问题：FileInfoPtr
 	{
 		MutexLockGuard lock(mutex_);
+		while (running_)
+		{
+			notRun_.wait();
+			//notRun_.waitForSeconds(3);//确定不再操作FileInfoPtr
+		}
+		//注意生命周期问题：FileInfoPtr
+		LOG_DEBUG;
 		fileList_.clear();
+		LOG_DEBUG;
 	}
 }
 
@@ -330,7 +331,7 @@ void FileServer::onConnection(const TcpConnectionPtr& conn)
 
 	}
 	LOG_INFO << "numConnected = " << numConnected_;
-	LOG_DEBUG << "clientFilePtr: " << getObjPtr.get();
+	LOG_INFO << "clientFilePtr: " << getObjPtr.get();
 }
 
 void FileServer::onUploadStartRequest(const muduo::net::TcpConnectionPtr& conn,

@@ -66,3 +66,17 @@ message UploadEndResponse{
 
 
 }
+
+
+message AppHeartbeatRequest{
+
+	required int64		package_numb 		= 1;
+	required string		identity_id 		= 2;
+	optional string		load_info			= 3;
+}
+
+message AppHeartbeatResponse{
+
+	required int64		package_numb 		= 1;
+	optional string		command				= 2;
+}

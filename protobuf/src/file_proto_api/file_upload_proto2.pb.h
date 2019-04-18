@@ -38,7 +38,7 @@ namespace protobuf_file_5fupload_5fproto2_2eproto {
 struct TableStruct {
   static const ::google::protobuf::internal::ParseTableField entries[];
   static const ::google::protobuf::internal::AuxillaryParseTableField aux[];
-  static const ::google::protobuf::internal::ParseTable schema[6];
+  static const ::google::protobuf::internal::ParseTable schema[8];
   static const ::google::protobuf::internal::FieldMetadata field_metadata[];
   static const ::google::protobuf::internal::SerializationTable serialization_table[];
   static const ::google::protobuf::uint32 offsets[];
@@ -46,6 +46,12 @@ struct TableStruct {
 void AddDescriptors();
 }  // namespace protobuf_file_5fupload_5fproto2_2eproto
 namespace edwards {
+class AppHeartbeatRequest;
+class AppHeartbeatRequestDefaultTypeInternal;
+extern AppHeartbeatRequestDefaultTypeInternal _AppHeartbeatRequest_default_instance_;
+class AppHeartbeatResponse;
+class AppHeartbeatResponseDefaultTypeInternal;
+extern AppHeartbeatResponseDefaultTypeInternal _AppHeartbeatResponse_default_instance_;
 class FileFrameTransferRequest;
 class FileFrameTransferRequestDefaultTypeInternal;
 extern FileFrameTransferRequestDefaultTypeInternal _FileFrameTransferRequest_default_instance_;
@@ -67,6 +73,8 @@ extern UploadStartResponseDefaultTypeInternal _UploadStartResponse_default_insta
 }  // namespace edwards
 namespace google {
 namespace protobuf {
+template<> ::edwards::AppHeartbeatRequest* Arena::CreateMaybeMessage<::edwards::AppHeartbeatRequest>(Arena*);
+template<> ::edwards::AppHeartbeatResponse* Arena::CreateMaybeMessage<::edwards::AppHeartbeatResponse>(Arena*);
 template<> ::edwards::FileFrameTransferRequest* Arena::CreateMaybeMessage<::edwards::FileFrameTransferRequest>(Arena*);
 template<> ::edwards::FileFrameTransferResponse* Arena::CreateMaybeMessage<::edwards::FileFrameTransferResponse>(Arena*);
 template<> ::edwards::UploadEndRequest* Arena::CreateMaybeMessage<::edwards::UploadEndRequest>(Arena*);
@@ -1083,6 +1091,291 @@ class UploadEndResponse : public ::google::protobuf::Message /* @@protoc_inserti
   ::google::protobuf::internal::ArenaStringPtr reason_;
   ::google::protobuf::int64 package_numb_;
   ::google::protobuf::int64 file_id_;
+  friend struct ::protobuf_file_5fupload_5fproto2_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
+class AppHeartbeatRequest : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:edwards.AppHeartbeatRequest) */ {
+ public:
+  AppHeartbeatRequest();
+  virtual ~AppHeartbeatRequest();
+
+  AppHeartbeatRequest(const AppHeartbeatRequest& from);
+
+  inline AppHeartbeatRequest& operator=(const AppHeartbeatRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  AppHeartbeatRequest(AppHeartbeatRequest&& from) noexcept
+    : AppHeartbeatRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline AppHeartbeatRequest& operator=(AppHeartbeatRequest&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields();
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const AppHeartbeatRequest& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const AppHeartbeatRequest* internal_default_instance() {
+    return reinterpret_cast<const AppHeartbeatRequest*>(
+               &_AppHeartbeatRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    6;
+
+  void Swap(AppHeartbeatRequest* other);
+  friend void swap(AppHeartbeatRequest& a, AppHeartbeatRequest& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline AppHeartbeatRequest* New() const final {
+    return CreateMaybeMessage<AppHeartbeatRequest>(NULL);
+  }
+
+  AppHeartbeatRequest* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<AppHeartbeatRequest>(arena);
+  }
+  void CopyFrom(const ::google::protobuf::Message& from) final;
+  void MergeFrom(const ::google::protobuf::Message& from) final;
+  void CopyFrom(const AppHeartbeatRequest& from);
+  void MergeFrom(const AppHeartbeatRequest& from);
+  void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) final;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const final;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(AppHeartbeatRequest* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // required string identity_id = 2;
+  bool has_identity_id() const;
+  void clear_identity_id();
+  static const int kIdentityIdFieldNumber = 2;
+  const ::std::string& identity_id() const;
+  void set_identity_id(const ::std::string& value);
+  #if LANG_CXX11
+  void set_identity_id(::std::string&& value);
+  #endif
+  void set_identity_id(const char* value);
+  void set_identity_id(const char* value, size_t size);
+  ::std::string* mutable_identity_id();
+  ::std::string* release_identity_id();
+  void set_allocated_identity_id(::std::string* identity_id);
+
+  // optional string load_info = 3;
+  bool has_load_info() const;
+  void clear_load_info();
+  static const int kLoadInfoFieldNumber = 3;
+  const ::std::string& load_info() const;
+  void set_load_info(const ::std::string& value);
+  #if LANG_CXX11
+  void set_load_info(::std::string&& value);
+  #endif
+  void set_load_info(const char* value);
+  void set_load_info(const char* value, size_t size);
+  ::std::string* mutable_load_info();
+  ::std::string* release_load_info();
+  void set_allocated_load_info(::std::string* load_info);
+
+  // required int64 package_numb = 1;
+  bool has_package_numb() const;
+  void clear_package_numb();
+  static const int kPackageNumbFieldNumber = 1;
+  ::google::protobuf::int64 package_numb() const;
+  void set_package_numb(::google::protobuf::int64 value);
+
+  // @@protoc_insertion_point(class_scope:edwards.AppHeartbeatRequest)
+ private:
+  void set_has_package_numb();
+  void clear_has_package_numb();
+  void set_has_identity_id();
+  void clear_has_identity_id();
+  void set_has_load_info();
+  void clear_has_load_info();
+
+  // helper for ByteSizeLong()
+  size_t RequiredFieldsByteSizeFallback() const;
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::HasBits<1> _has_bits_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
+  ::google::protobuf::internal::ArenaStringPtr identity_id_;
+  ::google::protobuf::internal::ArenaStringPtr load_info_;
+  ::google::protobuf::int64 package_numb_;
+  friend struct ::protobuf_file_5fupload_5fproto2_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
+class AppHeartbeatResponse : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:edwards.AppHeartbeatResponse) */ {
+ public:
+  AppHeartbeatResponse();
+  virtual ~AppHeartbeatResponse();
+
+  AppHeartbeatResponse(const AppHeartbeatResponse& from);
+
+  inline AppHeartbeatResponse& operator=(const AppHeartbeatResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  AppHeartbeatResponse(AppHeartbeatResponse&& from) noexcept
+    : AppHeartbeatResponse() {
+    *this = ::std::move(from);
+  }
+
+  inline AppHeartbeatResponse& operator=(AppHeartbeatResponse&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields();
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const AppHeartbeatResponse& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const AppHeartbeatResponse* internal_default_instance() {
+    return reinterpret_cast<const AppHeartbeatResponse*>(
+               &_AppHeartbeatResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    7;
+
+  void Swap(AppHeartbeatResponse* other);
+  friend void swap(AppHeartbeatResponse& a, AppHeartbeatResponse& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline AppHeartbeatResponse* New() const final {
+    return CreateMaybeMessage<AppHeartbeatResponse>(NULL);
+  }
+
+  AppHeartbeatResponse* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<AppHeartbeatResponse>(arena);
+  }
+  void CopyFrom(const ::google::protobuf::Message& from) final;
+  void MergeFrom(const ::google::protobuf::Message& from) final;
+  void CopyFrom(const AppHeartbeatResponse& from);
+  void MergeFrom(const AppHeartbeatResponse& from);
+  void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) final;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const final;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(AppHeartbeatResponse* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional string command = 2;
+  bool has_command() const;
+  void clear_command();
+  static const int kCommandFieldNumber = 2;
+  const ::std::string& command() const;
+  void set_command(const ::std::string& value);
+  #if LANG_CXX11
+  void set_command(::std::string&& value);
+  #endif
+  void set_command(const char* value);
+  void set_command(const char* value, size_t size);
+  ::std::string* mutable_command();
+  ::std::string* release_command();
+  void set_allocated_command(::std::string* command);
+
+  // required int64 package_numb = 1;
+  bool has_package_numb() const;
+  void clear_package_numb();
+  static const int kPackageNumbFieldNumber = 1;
+  ::google::protobuf::int64 package_numb() const;
+  void set_package_numb(::google::protobuf::int64 value);
+
+  // @@protoc_insertion_point(class_scope:edwards.AppHeartbeatResponse)
+ private:
+  void set_has_package_numb();
+  void clear_has_package_numb();
+  void set_has_command();
+  void clear_has_command();
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::HasBits<1> _has_bits_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
+  ::google::protobuf::internal::ArenaStringPtr command_;
+  ::google::protobuf::int64 package_numb_;
   friend struct ::protobuf_file_5fupload_5fproto2_2eproto::TableStruct;
 };
 // ===================================================================
@@ -2268,9 +2561,267 @@ inline void UploadEndResponse::set_allocated_reason(::std::string* reason) {
   // @@protoc_insertion_point(field_set_allocated:edwards.UploadEndResponse.reason)
 }
 
+// -------------------------------------------------------------------
+
+// AppHeartbeatRequest
+
+// required int64 package_numb = 1;
+inline bool AppHeartbeatRequest::has_package_numb() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void AppHeartbeatRequest::set_has_package_numb() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void AppHeartbeatRequest::clear_has_package_numb() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void AppHeartbeatRequest::clear_package_numb() {
+  package_numb_ = GOOGLE_LONGLONG(0);
+  clear_has_package_numb();
+}
+inline ::google::protobuf::int64 AppHeartbeatRequest::package_numb() const {
+  // @@protoc_insertion_point(field_get:edwards.AppHeartbeatRequest.package_numb)
+  return package_numb_;
+}
+inline void AppHeartbeatRequest::set_package_numb(::google::protobuf::int64 value) {
+  set_has_package_numb();
+  package_numb_ = value;
+  // @@protoc_insertion_point(field_set:edwards.AppHeartbeatRequest.package_numb)
+}
+
+// required string identity_id = 2;
+inline bool AppHeartbeatRequest::has_identity_id() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void AppHeartbeatRequest::set_has_identity_id() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void AppHeartbeatRequest::clear_has_identity_id() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void AppHeartbeatRequest::clear_identity_id() {
+  identity_id_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  clear_has_identity_id();
+}
+inline const ::std::string& AppHeartbeatRequest::identity_id() const {
+  // @@protoc_insertion_point(field_get:edwards.AppHeartbeatRequest.identity_id)
+  return identity_id_.GetNoArena();
+}
+inline void AppHeartbeatRequest::set_identity_id(const ::std::string& value) {
+  set_has_identity_id();
+  identity_id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:edwards.AppHeartbeatRequest.identity_id)
+}
+#if LANG_CXX11
+inline void AppHeartbeatRequest::set_identity_id(::std::string&& value) {
+  set_has_identity_id();
+  identity_id_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:edwards.AppHeartbeatRequest.identity_id)
+}
+#endif
+inline void AppHeartbeatRequest::set_identity_id(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  set_has_identity_id();
+  identity_id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:edwards.AppHeartbeatRequest.identity_id)
+}
+inline void AppHeartbeatRequest::set_identity_id(const char* value, size_t size) {
+  set_has_identity_id();
+  identity_id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:edwards.AppHeartbeatRequest.identity_id)
+}
+inline ::std::string* AppHeartbeatRequest::mutable_identity_id() {
+  set_has_identity_id();
+  // @@protoc_insertion_point(field_mutable:edwards.AppHeartbeatRequest.identity_id)
+  return identity_id_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* AppHeartbeatRequest::release_identity_id() {
+  // @@protoc_insertion_point(field_release:edwards.AppHeartbeatRequest.identity_id)
+  if (!has_identity_id()) {
+    return NULL;
+  }
+  clear_has_identity_id();
+  return identity_id_.ReleaseNonDefaultNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void AppHeartbeatRequest::set_allocated_identity_id(::std::string* identity_id) {
+  if (identity_id != NULL) {
+    set_has_identity_id();
+  } else {
+    clear_has_identity_id();
+  }
+  identity_id_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), identity_id);
+  // @@protoc_insertion_point(field_set_allocated:edwards.AppHeartbeatRequest.identity_id)
+}
+
+// optional string load_info = 3;
+inline bool AppHeartbeatRequest::has_load_info() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void AppHeartbeatRequest::set_has_load_info() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void AppHeartbeatRequest::clear_has_load_info() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void AppHeartbeatRequest::clear_load_info() {
+  load_info_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  clear_has_load_info();
+}
+inline const ::std::string& AppHeartbeatRequest::load_info() const {
+  // @@protoc_insertion_point(field_get:edwards.AppHeartbeatRequest.load_info)
+  return load_info_.GetNoArena();
+}
+inline void AppHeartbeatRequest::set_load_info(const ::std::string& value) {
+  set_has_load_info();
+  load_info_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:edwards.AppHeartbeatRequest.load_info)
+}
+#if LANG_CXX11
+inline void AppHeartbeatRequest::set_load_info(::std::string&& value) {
+  set_has_load_info();
+  load_info_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:edwards.AppHeartbeatRequest.load_info)
+}
+#endif
+inline void AppHeartbeatRequest::set_load_info(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  set_has_load_info();
+  load_info_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:edwards.AppHeartbeatRequest.load_info)
+}
+inline void AppHeartbeatRequest::set_load_info(const char* value, size_t size) {
+  set_has_load_info();
+  load_info_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:edwards.AppHeartbeatRequest.load_info)
+}
+inline ::std::string* AppHeartbeatRequest::mutable_load_info() {
+  set_has_load_info();
+  // @@protoc_insertion_point(field_mutable:edwards.AppHeartbeatRequest.load_info)
+  return load_info_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* AppHeartbeatRequest::release_load_info() {
+  // @@protoc_insertion_point(field_release:edwards.AppHeartbeatRequest.load_info)
+  if (!has_load_info()) {
+    return NULL;
+  }
+  clear_has_load_info();
+  return load_info_.ReleaseNonDefaultNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void AppHeartbeatRequest::set_allocated_load_info(::std::string* load_info) {
+  if (load_info != NULL) {
+    set_has_load_info();
+  } else {
+    clear_has_load_info();
+  }
+  load_info_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), load_info);
+  // @@protoc_insertion_point(field_set_allocated:edwards.AppHeartbeatRequest.load_info)
+}
+
+// -------------------------------------------------------------------
+
+// AppHeartbeatResponse
+
+// required int64 package_numb = 1;
+inline bool AppHeartbeatResponse::has_package_numb() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void AppHeartbeatResponse::set_has_package_numb() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void AppHeartbeatResponse::clear_has_package_numb() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void AppHeartbeatResponse::clear_package_numb() {
+  package_numb_ = GOOGLE_LONGLONG(0);
+  clear_has_package_numb();
+}
+inline ::google::protobuf::int64 AppHeartbeatResponse::package_numb() const {
+  // @@protoc_insertion_point(field_get:edwards.AppHeartbeatResponse.package_numb)
+  return package_numb_;
+}
+inline void AppHeartbeatResponse::set_package_numb(::google::protobuf::int64 value) {
+  set_has_package_numb();
+  package_numb_ = value;
+  // @@protoc_insertion_point(field_set:edwards.AppHeartbeatResponse.package_numb)
+}
+
+// optional string command = 2;
+inline bool AppHeartbeatResponse::has_command() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void AppHeartbeatResponse::set_has_command() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void AppHeartbeatResponse::clear_has_command() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void AppHeartbeatResponse::clear_command() {
+  command_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  clear_has_command();
+}
+inline const ::std::string& AppHeartbeatResponse::command() const {
+  // @@protoc_insertion_point(field_get:edwards.AppHeartbeatResponse.command)
+  return command_.GetNoArena();
+}
+inline void AppHeartbeatResponse::set_command(const ::std::string& value) {
+  set_has_command();
+  command_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:edwards.AppHeartbeatResponse.command)
+}
+#if LANG_CXX11
+inline void AppHeartbeatResponse::set_command(::std::string&& value) {
+  set_has_command();
+  command_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:edwards.AppHeartbeatResponse.command)
+}
+#endif
+inline void AppHeartbeatResponse::set_command(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  set_has_command();
+  command_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:edwards.AppHeartbeatResponse.command)
+}
+inline void AppHeartbeatResponse::set_command(const char* value, size_t size) {
+  set_has_command();
+  command_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:edwards.AppHeartbeatResponse.command)
+}
+inline ::std::string* AppHeartbeatResponse::mutable_command() {
+  set_has_command();
+  // @@protoc_insertion_point(field_mutable:edwards.AppHeartbeatResponse.command)
+  return command_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* AppHeartbeatResponse::release_command() {
+  // @@protoc_insertion_point(field_release:edwards.AppHeartbeatResponse.command)
+  if (!has_command()) {
+    return NULL;
+  }
+  clear_has_command();
+  return command_.ReleaseNonDefaultNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void AppHeartbeatResponse::set_allocated_command(::std::string* command) {
+  if (command != NULL) {
+    set_has_command();
+  } else {
+    clear_has_command();
+  }
+  command_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), command);
+  // @@protoc_insertion_point(field_set_allocated:edwards.AppHeartbeatResponse.command)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

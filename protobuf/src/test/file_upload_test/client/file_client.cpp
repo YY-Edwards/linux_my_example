@@ -37,6 +37,7 @@ using namespace muduo;
 using namespace muduo::net;
 
 const int8_t	kMaxFileId = 5;
+const int8_t	kHeartbeatCycle = 17;//s
 const uint16_t	kMaxPackageNumb = 0x9000;
 const int		kBufSize = 10 * 1024;//10k
 
@@ -85,6 +86,8 @@ public:
 			std::bind(&FileUploadClient::onFileFrameTransferResponse, this, _1, _2, _3));
 		dispatcher_.registerMessageCallback<edwards::UploadEndResponse>(
 			std::bind(&FileUploadClient::onUploadEndResponse, this, _1, _2, _3));
+		dispatcher_.registerMessageCallback<edwards::AppHeartbeatResponse>(
+			std::bind(&FileUploadClient::onAppHeartbeatResponse, this, _1, _2, _3));
 		
 		client_.setConnectionCallback(
 			std::bind(&FileUploadClient::onConnection, this, _1));
@@ -190,6 +193,20 @@ private:
 		LOG_DEBUG << "close fp. ";
 		fclose(fp);
 	}
+	void sendAppHeartbeat()
+	{
+		edwards::AppHeartbeatRequest hbReq;
+		hbReq.set_package_numb(pn_);
+		increasePackageNumn();
+		//ip:port:startTime:pid
+		hbReq.set_identity_id(clientIdentityID_);
+		LOG_DEBUG;
+		{
+			MutexLockGuard lock(pMutex_);
+			codec_.send(conn_, hbReq);
+		}
+	
+	}
 	void sendStartReqToBackend(int assignedId, const FileInfoPtr& file)
 	{
 		edwards::UploadStartRequest startReq;
@@ -249,6 +266,16 @@ private:
 		{
 			pn_ = 0x1000;
 		}
+	}
+	void onAppHeartbeatResponse(const muduo::net::TcpConnectionPtr& conn,
+		const UploadStartResponsePtr& message,
+		muduo::Timestamp t)
+	{
+		
+		LOG_DEBUG << message->GetTypeName()
+			<< "\n"
+			<< message->DebugString();
+		
 	}
 	void onUploadStartResponse(const muduo::net::TcpConnectionPtr& conn,
 		const UploadStartResponsePtr& message,
@@ -394,6 +421,13 @@ private:
 		MutexLockGuard lock(pMutex_);
 		if (conn->connected())
 		{
+			char buf[64] = "";
+			sprintf(buf, "%s:%lld:%u",
+				conn->localAddress().toIpPort().c_str(),
+				Timestamp::now().microSecondsSinceEpoch(),
+				CurrentThread::tid());
+			clientIdentityID_ = buf;
+			LOG_DEBUG << "identityKey: " << clientIdentityID_.c_str();
 			conn_ = conn;//写操作
 			//设置高水位
 			conn_->setHighWaterMarkCallback(
@@ -408,6 +442,9 @@ private:
 				}
 			}
 
+			//注册以17s为间隔的心跳消息
+			sendAppHeartbeat();
+			loop_->runEvery(kHeartbeatCycle, std::bind(&FileUploadClient::sendAppHeartbeat, this));
 		}
 		else
 		{
@@ -434,6 +471,7 @@ private:
 	ProtobufDispatcher	dispatcher_;
 	ProtobufCodec		codec_;
 	int64_t				pn_;//0x1000~0x9000;
+	std::string			clientIdentityID_;
 
 	MutexLock			mutex_;
 

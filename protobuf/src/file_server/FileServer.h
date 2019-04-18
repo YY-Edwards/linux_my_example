@@ -23,8 +23,15 @@
 #include <muduo/base/BlockingQueue.h>
 #include <muduo/base/Thread.h>
 
+
+#include <unordered_set>
+
 #include <stdio.h>
 #include <unistd.h>
+
+#include <boost/circular_buffer.hpp>
+
+
 
 using namespace muduo;
 using namespace muduo::net;
@@ -36,7 +43,7 @@ namespace edwards
 
 	const int		kPayloadSize = 10 * 1024;//10k
 	const int		kStreamBuffReduceRatio = 20;
-
+	const int		kIdleSeconds = 34;
 	class ClientFile
 	{
 	public:
@@ -170,7 +177,9 @@ namespace edwards
 
 		void onConnection(const TcpConnectionPtr& conn);
 
-
+		//展示所有的连接情况
+		void dumpConnectionBuckets() const;
+		void onTimer();
 
 		EventLoop*			loop_;
 		TcpServer			server_;
@@ -180,6 +189,34 @@ namespace edwards
 		const int			kMaxConnections_;
 		int					numConnected_; // should be atomic_int
 		std::map<int, TcpConnectionPtr> clientConns_;//多个客户
+
+
+
+		typedef std::weak_ptr<muduo::net::TcpConnection> WeakTcpConnctionPtr;
+		struct Entry : muduo::copyable
+		{
+			explicit Entry(const WeakTcpConnctionPtr& weakConn)
+				:weakConn_(weakConn)
+			{}
+			~Entry()
+			{
+				muduo::net::TcpConnectionPtr conn = weakConn_.lock();
+				if (conn)
+				{
+					conn->shutdown();//主动断开
+				}
+			}
+			WeakTcpConnctionPtr weakConn_;
+		};
+
+		typedef std::shared_ptr<Entry>			EntryPtr;
+		typedef std::weak_ptr<Entry>			WeakEntryPtr;
+		typedef std::unordered_set<EntryPtr>	Bucket;
+		typedef boost::circular_buffer<Bucket>	WeakConnectionList;
+
+		WeakConnectionList connectionBuckets_;
+
+
 	};
 }
 

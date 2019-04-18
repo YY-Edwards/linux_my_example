@@ -267,6 +267,9 @@ FileServer::FileServer(EventLoop *loop,
 	pool_.setMaxQueueSize(kMaxConnections_);
 	pool_.start(kMaxConnections_);//设定线程池大小
 
+	//设定时间轮盘大小，17*2=34
+	connectionBuckets_.resize(kIdleSeconds);
+
 }
 
 
@@ -316,6 +319,9 @@ void FileServer::onConnection(const TcpConnectionPtr& conn)
 			LOG_DEBUG << "addTask.";
 			pool_.addTask(std::bind(&ClientFile::writeFileFunc, getObjPtr));
 
+			//根据新连接构造弱观察对象，并插入轮盘末尾的Bucket中
+			EntryPtr newEntry(new Entry(conn));
+			connectionBuckets_.back().insert(newEntry);
 		}
 
 	}

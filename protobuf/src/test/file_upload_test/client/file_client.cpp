@@ -443,8 +443,8 @@ private:
 			}
 
 			//注册以17s为间隔的心跳消息
-			sendAppHeartbeat();
-			loop_->runEvery(kHeartbeatCycle, std::bind(&FileUploadClient::sendAppHeartbeat, this));
+			//sendAppHeartbeat();
+			//loop_->runEvery(kHeartbeatCycle, std::bind(&FileUploadClient::sendAppHeartbeat, this));
 		}
 		else
 		{

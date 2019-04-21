@@ -21,9 +21,10 @@ using namespace edwards;
 
 const std::string FirstPath = "/home/edwards/app/protobuf/connUploadFile/";
 
-ClientFile::ClientFile(const std::string& clientName)
+ClientFile::ClientFile(const std::string& clientName, const WeakEntryPtr& entryPtr)
 			:quit_(false)
 			, connName_(clientName)
+			, weakEntryPtr_(entryPtr)
 			, running_(false)
 			, mutex_()
 			, notRun_(mutex_)
@@ -301,13 +302,18 @@ void FileServer::onConnection(const TcpConnectionPtr& conn)
 		}
 		else
 		{
+
+			//根据新连接构造弱观察对象，并插入轮盘末尾的Bucket中
+			EntryPtr newEntry(new Entry(conn));
+			connectionBuckets_.back().insert(newEntry);
+			WeakEntryPtr newWeakEntry(newEntry);
 			//构造一个客户文件对象，并与TcpConnectionPtr绑定
 			//注意ClientFile为含有禁止拷贝对象
 			//注意：这里是否可以使用std::ref来包装对象的引用，然后再传递
 			//让boost::Any存储对象引用的拷贝,
 			//当然这得保证引用被调用时对象是存在的
 			{
-				ClientFilePtr newObj(new edwards::ClientFile(conn->peerAddress().toIpPort()));
+				ClientFilePtr newObj(new edwards::ClientFile(conn->peerAddress().toIpPort(), newWeakEntry));
 				assert(newObj);
 				conn->setContext(newObj);
 			}
@@ -319,9 +325,6 @@ void FileServer::onConnection(const TcpConnectionPtr& conn)
 			LOG_DEBUG << "addTask.";
 			pool_.addTask(std::bind(&ClientFile::writeFileFunc, getObjPtr));
 
-			//根据新连接构造弱观察对象，并插入轮盘末尾的Bucket中
-			EntryPtr newEntry(new Entry(conn));
-			connectionBuckets_.back().insert(newEntry);
 		}
 
 	}

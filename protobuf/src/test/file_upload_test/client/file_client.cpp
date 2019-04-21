@@ -67,6 +67,8 @@ public:
 	typedef std::shared_ptr<edwards::UploadEndRequest> UploadEndRequestPtr;
 	typedef std::shared_ptr<edwards::UploadEndResponse> UploadEndResponsePtr;
 
+	typedef std::shared_ptr<edwards::AppHeartbeatResponse> AppHeartbeatResponsePtr;
+
 
 	explicit FileUploadClient(EventLoop *loop,
 		const InetAddress& serverAddr,
@@ -86,6 +88,7 @@ public:
 			std::bind(&FileUploadClient::onFileFrameTransferResponse, this, _1, _2, _3));
 		dispatcher_.registerMessageCallback<edwards::UploadEndResponse>(
 			std::bind(&FileUploadClient::onUploadEndResponse, this, _1, _2, _3));
+
 		dispatcher_.registerMessageCallback<edwards::AppHeartbeatResponse>(
 			std::bind(&FileUploadClient::onAppHeartbeatResponse, this, _1, _2, _3));
 		
@@ -268,7 +271,7 @@ private:
 		}
 	}
 	void onAppHeartbeatResponse(const muduo::net::TcpConnectionPtr& conn,
-		const UploadStartResponsePtr& message,
+		const AppHeartbeatResponsePtr& message,
 		muduo::Timestamp t)
 	{
 		

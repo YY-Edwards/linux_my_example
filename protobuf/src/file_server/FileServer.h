@@ -44,6 +44,29 @@ namespace edwards
 	const int		kPayloadSize = 10 * 1024;//10k
 	const int		kStreamBuffReduceRatio = 20;
 	const int		kIdleSeconds = 34;
+
+	typedef std::weak_ptr<muduo::net::TcpConnection> WeakTcpConnctionPtr;
+	struct Entry : muduo::copyable
+	{
+		explicit Entry(const WeakTcpConnctionPtr& weakConn)
+			:weakConn_(weakConn)
+		{}
+		~Entry()
+		{
+			muduo::net::TcpConnectionPtr conn = weakConn_.lock();
+			if (conn)
+			{
+				conn->shutdown();//主动断开
+			}
+		}
+		WeakTcpConnctionPtr weakConn_;
+	};
+
+	typedef std::shared_ptr<Entry>			EntryPtr;
+	typedef std::weak_ptr<Entry>			WeakEntryPtr;
+	typedef std::unordered_set<EntryPtr>	Bucket;
+	typedef boost::circular_buffer<Bucket>	WeakConnectionList;
+
 	class ClientFile
 	{
 	public:
@@ -79,7 +102,8 @@ namespace edwards
 
 		typedef std::shared_ptr<ClientUploadFileInfo> FileInfoPtr;
 
-		ClientFile(const std::string& clientName);
+		//将Entry的弱引用与ClientFile绑定在一起
+		ClientFile(const std::string& clientName, const WeakEntryPtr& entryPtr);
 		~ClientFile();
 
 		bool create(int file_id, std::string fileName, uint64_t file_size);
@@ -93,12 +117,17 @@ namespace edwards
 		bool isWriteFileFinished(int file_id);
 		void writeFileFunc();
 		void exitDownloadAndClose();
+		const WeakEntryPtr& getWeakEntryPtr()
+		{
+			return weakEntryPtr_;
+		}
 
 	private:
 
 		bool quit_;
 		bool running_;
 		std::string connName_;
+		WeakEntryPtr weakEntryPtr_;
 		std::string storagePath_;
 		mutable MutexLock mutex_;//可以在const修饰的函数中使用
 		Condition notRun_;
@@ -187,32 +216,9 @@ namespace edwards
 		ProtobufCodec		codec_;
 		TaskThreadPool		pool_;
 		const int			kMaxConnections_;
-		int					numConnected_; // should be atomic_int
+		std::atomic<int>	numConnected_;
+		//int					numConnected_; // should be atomic_int
 		std::map<int, TcpConnectionPtr> clientConns_;//多个客户
-
-
-
-		typedef std::weak_ptr<muduo::net::TcpConnection> WeakTcpConnctionPtr;
-		struct Entry : muduo::copyable
-		{
-			explicit Entry(const WeakTcpConnctionPtr& weakConn)
-				:weakConn_(weakConn)
-			{}
-			~Entry()
-			{
-				muduo::net::TcpConnectionPtr conn = weakConn_.lock();
-				if (conn)
-				{
-					conn->shutdown();//主动断开
-				}
-			}
-			WeakTcpConnctionPtr weakConn_;
-		};
-
-		typedef std::shared_ptr<Entry>			EntryPtr;
-		typedef std::weak_ptr<Entry>			WeakEntryPtr;
-		typedef std::unordered_set<EntryPtr>	Bucket;
-		typedef boost::circular_buffer<Bucket>	WeakConnectionList;
 
 		WeakConnectionList connectionBuckets_;
 

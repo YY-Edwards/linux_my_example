@@ -297,8 +297,8 @@ void FileServer::setThreadNumb(int numb)
 
 void FileServer::onConnection(const TcpConnectionPtr& conn)
 {
-	LOG_INFO << conn->localAddress().toIpPort() << " -> "
-		<< conn->peerAddress().toIpPort() << " is "
+	LOG_INFO << conn->peerAddress().toIpPort() << " -> "
+		<< conn->localAddress().toIpPort() << " is "
 		<< (conn->connected() ? "UP" : "DOWN");
 
 	ClientFilePtr getObjPtr;
@@ -519,7 +519,7 @@ void FileServer::onAppHeartbeatRequest(const muduo::net::TcpConnectionPtr& conn,
 										muduo::Timestamp t)
 {
 
-	LOG_DEBUG << message->GetTypeName()
+	LOG_DEBUG << message->GetTypeName() << "\n"
 		<< "pn: " << message->package_numb() << "\n"
 		<< "identity_id: " << message->identity_id() << "\n"
 		<< "load_info: " << message->load_info() << "\n";

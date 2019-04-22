@@ -534,7 +534,7 @@ void FileServer::onAppHeartbeatRequest(const muduo::net::TcpConnectionPtr& conn,
 	//如果直接新建并插入，那么这entry是一个新的实体，只是其中恰好又保存了conn的弱引用。
 	//那么这个new-entry实际在Buckets的引用计数+1而已，并不是对原来entry的引用计数+1，
 	//因此不能起到刷新原有连接的作用。
-	WeakEntryPtr oldEntry(boost::any_cast<ClientFile>(conn->getContext()).getWeakEntryPtr());
+	WeakEntryPtr oldEntry((*boost::any_cast<ClientFilePtr>(conn->getMutableContext()))->getWeakEntryPtr());
 	EntryPtr entry(oldEntry.lock());
 	if (entry)
 	{

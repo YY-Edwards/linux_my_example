@@ -331,11 +331,12 @@ void FileServer::onConnection(const TcpConnectionPtr& conn)
 				ClientFilePtr newObj(new edwards::ClientFile(conn->peerAddress().toIpPort(), newWeakEntry));
 				assert(newObj);
 				conn->setContext(newObj);
+				LOG_INFO << "insert pointer: " << newObj.get();
 			}
 			//取出每一个客户端绑定的文件对象
 			getObjPtr = *boost::any_cast<ClientFilePtr>(conn->getMutableContext());
 			assert(getObjPtr);
-
+			LOG_INFO << "get pointer: " << getObjPtr.get();
 			//注意避免任务太多导致的阻塞
 			LOG_DEBUG << "addTask.";
 			pool_.addTask(std::bind(&ClientFile::writeFileFunc, getObjPtr));

@@ -53,9 +53,12 @@ namespace edwards
 		{}
 		~Entry()
 		{
+			LOG_DEBUG;
 			muduo::net::TcpConnectionPtr conn = weakConn_.lock();
 			if (conn)
 			{
+				LOG_DEBUG << conn->name() 
+					<< " timeout and shutdown!";
 				conn->shutdown();//主动断开
 			}
 		}
@@ -152,6 +155,7 @@ namespace edwards
 		//typedef std::shared_ptr<edwards::FileFrameTransferResponse> FileFrameTransferResponsePtr;
 		typedef std::shared_ptr<edwards::UploadEndRequest> UploadEndRequestPtr;
 		//typedef std::shared_ptr<edwards::UploadEndResponse> UploadEndResponsePtr;
+		typedef std::shared_ptr<edwards::AppHeartbeatRequest> AppHeartbeatRequestPtr;
 
 		explicit FileServer(EventLoop *loop,
 							const InetAddress& listenAddr,
@@ -185,6 +189,8 @@ namespace edwards
 								const std::string& result,
 								const std::string& reason);
 
+		void sendAppHearbeatResponse(const muduo::net::TcpConnectionPtr& conn, int recvPn);
+
 		void onUploadStartRequest(const muduo::net::TcpConnectionPtr& conn,
 								  const UploadStartRequestPtr& message,
 								  muduo::Timestamp t);
@@ -197,6 +203,10 @@ namespace edwards
 								const UploadEndRequestPtr& message,
 							    muduo::Timestamp t);
 
+		void onAppHeartbeatRequest(const muduo::net::TcpConnectionPtr& conn,
+								   const AppHeartbeatRequestPtr& message,
+								   muduo::Timestamp t);
+
 		void onUnknowMessage(const TcpConnectionPtr& conn,
 							 const MessagePtr& message,
 							 muduo::Timestamp)
@@ -205,6 +215,10 @@ namespace edwards
 		}
 
 		void onConnection(const TcpConnectionPtr& conn);
+
+		void onMessage(const muduo::net::TcpConnectionPtr& conn,
+						muduo::net::Buffer* buf,
+						muduo::Timestamp  receviceTime);
 
 		//展示所有的连接情况
 		void dumpConnectionBuckets() const;
@@ -221,6 +235,8 @@ namespace edwards
 		std::map<int, TcpConnectionPtr> clientConns_;//多个客户
 
 		WeakConnectionList connectionBuckets_;
+		mutable MutexLock mutex_;//可以在const修饰的函数中使用
+
 
 
 	};

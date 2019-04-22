@@ -246,6 +246,7 @@ FileServer::FileServer(EventLoop *loop,
 					   , kMaxConnections_(maxConnections)
 					   , numConnected_(0)
 					   , server_(loop, listenAddr, name)
+					   , mutex_()
 					   , dispatcher_(std::bind(&FileServer::onUnknowMessage, this, _1, _2, _3))//注册一个无法识别的默认的回调
 					   //还可以注册一个解析出错的用户回调
 					   , codec_(std::bind(&ProtobufDispatcher::onProtobufMessage, &dispatcher_, _1, _2, _3), NULL)
@@ -258,9 +259,14 @@ FileServer::FileServer(EventLoop *loop,
 		std::bind(&FileServer::onFileFrameTransferRequest, this, _1, _2, _3));
 	dispatcher_.registerMessageCallback<edwards::UploadEndRequest>(
 		std::bind(&FileServer::onUploadEndRequest, this, _1, _2, _3));
+	dispatcher_.registerMessageCallback<edwards::AppHeartbeatRequest>(
+		std::bind(&FileServer::onAppHeartbeatRequest, this, _1, _2, _3));
 
 	server_.setConnectionCallback(
 		std::bind(&FileServer::onConnection, this, _1));
+
+	//server_.setMessageCallback(
+	//	std::bind(&FileServer::onMessage, this, _1, _2, _3));
 	server_.setMessageCallback(
 		std::bind(&ProtobufCodec::onMessage, &codec_, _1, _2, _3));
 	
@@ -268,8 +274,13 @@ FileServer::FileServer(EventLoop *loop,
 	pool_.setMaxQueueSize(kMaxConnections_);
 	pool_.start(kMaxConnections_);//设定线程池大小
 
+
+	//注册定时（1s）回调
+	loop->runEvery(1.0, std::bind(&FileServer::onTimer, this));
+
 	//设定时间轮盘大小，17*2=34
 	connectionBuckets_.resize(kIdleSeconds);
+	dumpConnectionBuckets();
 
 }
 
@@ -303,9 +314,13 @@ void FileServer::onConnection(const TcpConnectionPtr& conn)
 		else
 		{
 
-			//根据新连接构造弱观察对象，并插入轮盘末尾的Bucket中
+			//根据新连接构造包含弱观察对象的实体，并插入轮盘末尾的Bucket中
 			EntryPtr newEntry(new Entry(conn));
-			connectionBuckets_.back().insert(newEntry);
+			{
+				MutexLockGuard lock(mutex_);
+				connectionBuckets_.back().insert(newEntry);
+				dumpConnectionBuckets();
+			}
 			WeakEntryPtr newWeakEntry(newEntry);
 			//构造一个客户文件对象，并与TcpConnectionPtr绑定
 			//注意ClientFile为含有禁止拷贝对象
@@ -336,11 +351,78 @@ void FileServer::onConnection(const TcpConnectionPtr& conn)
 		 if (getObjPtr)
 		 {
 			 getObjPtr->exitDownloadAndClose();
+			 WeakEntryPtr oldWeakEntry(getObjPtr->getWeakEntryPtr());
+			 LOG_DEBUG << "Entry use_count = " << oldWeakEntry.use_count();
 		 }
 
 	}
 	LOG_INFO << "numConnected = " << numConnected_;
 	LOG_INFO << "clientFilePtr: " << getObjPtr.get();
+}
+
+//void FileServer::onMessage(const muduo::net::TcpConnectionPtr& conn,
+//							muduo::net::Buffer* buf,
+//							muduo::Timestamp  receviceTime)
+//{
+//	LOG_DEBUG;
+//	codec_.onMessage(conn, buf, receviceTime);
+//
+//
+//	//这里不直接创建一个新的，考虑为什么：
+//	//当entry在队首时，下一刻客户端超时则自动析构,先调用shutdown。
+//	//如果此时server收到消息，此时应该先判断这个conn原先绑定的entry是否还在，
+//	//如果有则刷新。
+//
+//	//如果直接新建并插入，那么这entry是一个新的实体，只是其中恰好又保存了conn的弱引用。
+//	//那么这个new-entry实际在Buckets的引用计数+1而已，并不是对原来entry的引用计数+1，
+//	//因此不能起到刷新原有连接的作用。
+//	WeakEntryPtr oldEntry(boost::any_cast<ClientFile>(conn->getContext()).getWeakEntryPtr());
+//	EntryPtr entry(oldEntry.lock());
+//	if (entry)
+//	{
+//		{
+//			MutexLockGuard lock(mutex_);
+//			connectionBuckets_.back().insert(entry);
+//			dumpConnectionBuckets();
+//		}
+//	}
+//}
+
+void FileServer::onTimer()
+{
+	//这样 circular_buffer 会自动弹出队首的 Bucket，并析构之.
+	//在析构的时候，会在容器里依次将其中的EntryPtr对象引用计数-1.
+	{
+		MutexLockGuard lock(mutex_);
+		connectionBuckets_.push_back(Bucket());
+		dumpConnectionBuckets();
+	}
+
+}
+
+void FileServer::dumpConnectionBuckets() const
+{
+	LOG_INFO << "size = " << connectionBuckets_.size();
+	int idx = 0;
+	for (WeakConnectionList::const_iterator bucketI = connectionBuckets_.begin();
+		bucketI != connectionBuckets_.end(); ++bucketI, ++idx)
+	{
+		const Bucket& bucket = *bucketI;
+		printf("[%d] len = %zd : ", idx, bucket.size());
+		for (Bucket::const_iterator entryI = bucket.begin();
+			entryI != bucket.end(); ++entryI)
+		{
+			//表示被观测资源是否还在
+			//注意这里指针和结构体的用法时机
+			bool connectionDead = (*entryI)->weakConn_.expired();
+			printf("%p(%ld)%s, ", (*entryI).get(), entryI->use_count(),
+				connectionDead ? " DEAD" : "");
+
+		}
+		//printf("\r\n");
+		puts("");
+	}
+
 }
 
 void FileServer::onUploadStartRequest(const muduo::net::TcpConnectionPtr& conn,
@@ -431,6 +513,42 @@ void FileServer::onUploadEndRequest(const muduo::net::TcpConnectionPtr& conn,
 }
 
 
+void FileServer::onAppHeartbeatRequest(const muduo::net::TcpConnectionPtr& conn,
+										const AppHeartbeatRequestPtr& message,
+										muduo::Timestamp t)
+{
+
+	LOG_DEBUG << message->GetTypeName()
+		<< "pn: " << message->package_numb() << "\n"
+		<< "identity_id: " << message->identity_id() << "\n"
+		<< "load_info: " << message->load_info() << "\n";
+
+
+	sendAppHearbeatResponse(conn, message->package_numb());
+
+	//这里不直接创建一个新的，考虑为什么：
+	//当entry在队首时，下一刻客户端超时则自动析构,先调用shutdown。
+	//如果此时server收到消息，此时应该先判断这个conn原先绑定的entry是否还在，
+	//如果有则刷新。
+
+	//如果直接新建并插入，那么这entry是一个新的实体，只是其中恰好又保存了conn的弱引用。
+	//那么这个new-entry实际在Buckets的引用计数+1而已，并不是对原来entry的引用计数+1，
+	//因此不能起到刷新原有连接的作用。
+	WeakEntryPtr oldEntry(boost::any_cast<ClientFile>(conn->getContext()).getWeakEntryPtr());
+	EntryPtr entry(oldEntry.lock());
+	if (entry)
+	{
+		{
+			MutexLockGuard lock(mutex_);
+			connectionBuckets_.back().insert(entry);
+			dumpConnectionBuckets();
+		}
+	}
+
+}
+
+
+
 void FileServer::sendStartResponse(const muduo::net::TcpConnectionPtr& conn,
 								   int recvPn, 
 								   int fileId, 
@@ -483,3 +601,13 @@ void FileServer::sendEndResponse(const muduo::net::TcpConnectionPtr& conn,
 
 
 
+void FileServer::sendAppHearbeatResponse(const muduo::net::TcpConnectionPtr& conn, int recvPn)
+{
+
+	edwards::AppHeartbeatResponse heartbeatResp;
+	heartbeatResp.set_package_numb(recvPn);
+	heartbeatResp.set_command("okay!");
+
+	codec_.send(conn, heartbeatResp);
+
+}
